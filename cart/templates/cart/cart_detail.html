@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-    您的购物车
+    您的購物車
 {% endblock %}
 
 {% block content %}
-    <h1>您的购物车</h1>
+    <h1>您的購物車</h1>
 
     <div class="row">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
@@ -13,9 +13,9 @@
                 <thead>
                     <tr>
                         <th>商品</th>
-                        <th>数量</th>
-                        <th class="text-center">价格</th>
-                        <th class="text-center">总价</th>
+                        <th>數量</th>
+                        <th class="text-center">價格</th>
+                        <th class="text-center">總價</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -56,8 +56,13 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><h3>总计</h3></td>
+                        <td><h3>總計</h3></td>
                         <td class="text-right"><h3><strong>NT${{ total_price }}</strong></h3></td>
+                        <td>
+                            <a href="{% url 'orders:order_create' %}" class="btn btn-success">
+                                結帳
+                            </a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

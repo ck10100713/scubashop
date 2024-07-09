@@ -1,0 +1,28 @@
+<!-- order/templates/order/order_detail.html -->
+{% extends "base.html" %}
+{% load order_extras %}
+
+{% block title %}订单详情{% endblock %}
+{% block content %}
+<h2>订单详情</h2>
+<p>订单 ID: {{ order.id }}</p>
+<p>用户: {{ order.user.username }}</p>
+<p>创建时间: {{ order.created_at }}</p>
+<table>
+    <tr>
+        <th>商品</th>
+        <th>数量</th>
+        <th>价格</th>
+        <th>总价</th>
+    </tr>
+    {% for item in order.items.all %}
+    <tr>
+        <td>{{ item.goods.title }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.get_total_price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>总价: {{ total_cost }}</p>
+{% endblock %}

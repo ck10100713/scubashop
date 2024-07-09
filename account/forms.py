@@ -6,19 +6,19 @@ from .models import Register
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(
-        label="用户名",
+        label="使用者名稱",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     email = forms.EmailField(
-        label="电子邮件",
+        label="信箱",
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(
-        label="密码",
+        label="密碼",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
     password2 = forms.CharField(
-        label="确认密码",
+        label="確認密碼",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
@@ -28,10 +28,10 @@ class RegisterForm(UserCreationForm):
 
 class LoginForm(forms.Form):
     username = forms.CharField(
-        label="用户名",
+        label="使用者名稱",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password = forms.CharField(
-        label="密码",
+        label="密碼",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )

@@ -18,4 +18,3 @@ class CartInfoAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(GoodsType)
 admin.site.register(Goods,GoodsAdmin)
-# admin.site.register(CartInfo,CartInfoAdmin)

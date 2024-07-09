@@ -29,7 +29,7 @@
                             <p class="card-text">{{ product.description }}</p>
                         </div>
                         <div class="card-footer">
-                            <a href="#" class="btn btn-primary">加入購物車</a>
+                            <a href="{% url 'cart:add_to_cart' product.pk %}" class="btn btn-primary">加入購物車</a>
                         </div>
                     </div>
                 </div>

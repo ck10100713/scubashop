@@ -12,7 +12,7 @@ def register_view(request):
             return redirect('/')  # 注册成功后重定向到首页或其他页面
     else:
         form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'account/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def login_view(request):
                 form.add_error(None, '無效的用戶名或密碼')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'account/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
