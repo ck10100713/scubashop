@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+    您的购物车
+{% endblock %}
+
+{% block content %}
+    <h1>您的购物车</h1>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>商品</th>
+                        <th>数量</th>
+                        <th class="text-center">价格</th>
+                        <th class="text-center">总价</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                        <tr>
+                            <td class="col-sm-8 col-md-6">
+                                <div class="media">
+                                    <a class="thumbnail pull-left" href="{{ item.goods.get_absolute_url }}">
+                                        <img class="media-object" src="{{ item.goods.picture.url }}" style="width: 72px; height: 72px;">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            <a href="{{ item.goods.get_absolute_url }}">{{ item.goods.title }}</a>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="col-sm-1 col-md-1" style="text-align: center">
+                                {{ item.amount }}
+                            </td>
+                            <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.goods.price }}</strong></td>
+                            <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.get_total_price }}</strong></td>
+                            <td class="col-sm-1 col-md-1">
+                                <a href="{% url 'cart:remove_from_cart' item.goods.id %}" class="btn btn-danger">
+                                    <i class="glyphicon glyphicon-remove"></i> 移除
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><h3>总计</h3></td>
+                        <td class="text-right"><h3><strong>NT${{ total_price }}</strong></h3></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <h2 class="mt-5">登录</h2>
+        <form method="post" action="{% url 'account:login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">登录</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
