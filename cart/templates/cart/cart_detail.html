@@ -40,7 +40,13 @@
                             <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.goods.price }}</strong></td>
                             <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.get_total_price }}</strong></td>
                             <td class="col-sm-1 col-md-1">
-                                <a href="{% url 'cart:remove_from_cart' item.goods.id %}" class="btn btn-danger">
+                                <a href="{% url 'cart:remove_from_cart' item.goods.id %}" class="btn btn-dark">
+                                    <i class="glyphicon glyphicon-remove"></i> 減少
+                                </a>
+                                <a href="{% url 'cart:add_to_cart' item.goods.id %}" class="btn btn-dark">
+                                    <i class="glyphicon glyphicon-remove"></i> 增加
+                                </a>
+                                <a href="{% url 'cart:delete_from_cart' item.goods.id %}" class="btn btn-danger">
                                     <i class="glyphicon glyphicon-remove"></i> 移除
                                 </a>
                             </td>
