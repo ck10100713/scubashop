@@ -57,9 +57,20 @@
                         <td></td>
                         <td></td>
                         <td><h3>總計</h3></td>
-                        <td class="text-right"><h3><strong>NT${{ total_price }}</strong></h3></td>
-                        <td>
-                            <a href="{% url 'orders:order_create' %}" class="btn btn-success">
+                        <td class="text-right">
+                            <h3><strong>NT${{ total_price }}</strong></h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <a href="javascript:history.back()" class="btn btn-success">
+                                繼續購物
+                            </a>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right">
+                            <a href="{% url 'orders:order_check' %}" class="btn btn-danger">
                                 結帳
                             </a>
                         </td>

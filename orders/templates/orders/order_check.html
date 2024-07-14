@@ -1,0 +1,48 @@
+<!-- order/templates/order/order_create.html -->
+{% extends "base.html" %}
+{% block title %}創建訂單{% endblock %}
+{% block content %}
+<h2>確認訂單</h2>
+<table>
+    <tr>
+        <th>商品</th>
+        <th>數量</th>
+        <th>價格</th>
+        <th>總價</th>
+    </tr>
+    <tbody>
+        {% for item in cart_items %}
+            <tr>
+                <td class="col-sm-8 col-md-6">
+                    <div class="media">
+                        <a class="thumbnail pull-left" href="{{ item.goods.get_absolute_url }}">
+                            <img class="media-object" src="{{ item.goods.picture.url }}" style="width: 72px; height: 72px;">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="media-heading">
+                                <a href="{{ item.goods.get_absolute_url }}">{{ item.goods.title }}</a>
+                            </h4>
+                        </div>
+                    </div>
+                </td>
+                <td class="col-sm-1 col-md-1" style="text-align: center">
+                    {{ item.amount }}
+                </td>
+                <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.goods.price }}</strong></td>
+                <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.get_total_price }}</strong></td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><h3>總計</h3></td>
+            <td class="text-right"><h3><strong>NT${{ total_price }}</strong></h3></td>
+        </tr>
+    </tbody>
+</table>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">繼續結帳</button>
+</form>
+{% endblock %}

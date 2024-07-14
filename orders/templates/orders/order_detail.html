@@ -1,28 +1,35 @@
-<!-- order/templates/order/order_detail.html -->
+<!-- orders/templates/orders/order_detail.html -->
 {% extends "base.html" %}
-{% load order_extras %}
 
-{% block title %}订单详情{% endblock %}
+{% block title %}
+    Order Detail
+{% endblock %}
+
 {% block content %}
-<h2>订单详情</h2>
-<p>订单 ID: {{ order.id }}</p>
-<p>用户: {{ order.user.username }}</p>
-<p>创建时间: {{ order.created_at }}</p>
-<table>
-    <tr>
-        <th>商品</th>
-        <th>数量</th>
-        <th>价格</th>
-        <th>总价</th>
-    </tr>
-    {% for item in order.items.all %}
-    <tr>
-        <td>{{ item.goods.title }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.get_total_price }}</td>
-    </tr>
-    {% endfor %}
-</table>
-<p>总价: {{ total_cost }}</p>
+    <div class="container mt-4">
+        <h2>Order Successfully Placed!</h2>
+        
+        <div class="alert alert-success" role="alert">
+            Your order has been successfully placed. Thank you for your purchase!
+        </div>
+        
+        <!-- 顯示訂單詳細內容 -->
+        <h3>訂單細節：</h3>
+        <p><strong>姓名：</strong> {{ order.name }}</p>
+        <p><strong>地址：</strong> {{ order.address }}</p>
+        <p><strong>聯絡電話：</strong> {{ order.contact_number }}</p>
+        <p><strong>電子信箱：</strong> {{ order.email }}</p>
+        <p><strong>付款資訊：</strong> {{ order.credit_card }}</p>
+
+        <!-- 顯示商品明細 -->
+        <h3>商品明細：</h3>
+        <ul>
+            {% for item in order.items.all %}
+                <li>{{ item.goods.title }} - {{ item.quantity }} x NT${{ item.price }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- 直接顯示總金額 -->
+        <h4>總金額： NT${{ total_cost }}</h4>
+    </div>
 {% endblock %}

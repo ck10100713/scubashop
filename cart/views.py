@@ -36,15 +36,15 @@ def delete_from_cart(request, goods_id):
     cart_item.delete()
     return redirect('cart:cart_detail')
 
-# @login_required
-# def clear_cart(request):
-#     Cart.objects.filter(user=request.user).delete()
-#     return redirect('cart:cart_detail')
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import CartSerializer
+from rest_framework import permissions
+from rest_framework.decorators import permission_classes
 
-# @login_required
-# def update_cart(request, goods_id):
-#     goods = get_object_or_404(Goods, id=goods_id)
-#     cart_item = Cart.objects.get(user=request.user, goods=goods)
-#     cart_item.amount = int(request.POST['amount'])
-#     cart_item.save()
-#     return redirect('cart:cart_detail')
+@permission_classes([permissions.IsAuthenticated])
+@api_view(['GET'])
+def cart_list(request, user_id):
+    cart_items = Cart.objects.filter(user_id=user_id)
+    serializer = CartSerializer(cart_items, many=True)
+    return Response(serializer.data)
