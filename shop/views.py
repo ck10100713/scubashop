@@ -35,79 +35,90 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import GoodsSerializer, GoodsTypeSerializer
 from rest_framework import status, permissions
+from rest_framework.permissions import IsAdminUser
 
 
 @api_view(['GET'])
 def api_overview(request):
     api_urls = {
-        'Goods List': '/goods-list/',
-        'Goods Detail': '/goods/<str:pk>/',
-        'Goods Update': '/goods-update/<str:pk>/',
-        'Goods Create': '/goods-create/',
-        'Goodstype List': '/goodstype-list/',
-        'Goodstype Detail': '/goodstype/<str:pk>/',
-        'Goodstype Update': '/goodstype-update/<str:pk>/',
-        'Goodstype Create': '/goodstype-create/',
+        'Goods': 'api/goods',
+        'Goods Detail': 'api/goods/<str:pk>',
+        'Goods Type': 'api/goodstype',
+        'Goods Type Detail': 'api/goodstype/<str:pk>',
     }
     return Response(api_urls)
 
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
+def goods(request, pk=None):
+    # 根據請求方法設置權限
+    if request.method in ['POST', 'PATCH', 'DELETE']:
+        permission_classes = [IsAdminUser]
+    else:
+        permission_classes = []
 
-@api_view(['GET'])
-def goods_list(request):
-    goods = Goods.objects.all()
-    serializer = GoodsSerializer(goods, many=True)
-    return Response(serializer.data)
+    # 檢查權限
+    for permission in permission_classes:
+        if not permission().has_permission(request, view=goods):
+            return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
 
-@api_view(['GET'])
-def goods_detail(request, pk):
-    goods = Goods.objects.get(id=pk)
-    serializer = GoodsSerializer(goods, many=False)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        if pk:
+            goods = Goods.objects.get(id=pk)
+            serializer = GoodsSerializer(goods, many=False)
+        else:
+            goods = Goods.objects.all()
+            serializer = GoodsSerializer(goods, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = GoodsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'PATCH':
+        goods = Goods.objects.get(id=pk)
+        serializer = GoodsSerializer(instance=goods, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        goods = Goods.objects.get(id=pk)
+        goods.delete()
+        return Response('Item deleted', status=status.HTTP_204_NO_CONTENT)
 
-@permission_classes([permissions.IsAuthenticated])
-@api_view(['POST'])
-def goods_create(request):
-    serializer = GoodsSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
+def goodstype(request, pk=None):
+    # 根據請求方法設置權限
+    if request.method in ['POST', 'PATCH', 'DELETE']:
+        permission_classes = [IsAdminUser]
+    else:
+        permission_classes = []
+    # 檢查權限
+    for permission in permission_classes:
+        if not permission().has_permission(request, view=goodstype):
+            return Response({'detail': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
 
-@permission_classes([permissions.IsAuthenticated])
-@api_view(['PATCH'])
-def goods_update(request, id):
-    school = Goods.objects.get(id=id)
-    serializer = GoodsSerializer(instance=school, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def goodstype_list(request):
-    goodstype = GoodsType.objects.all()
-    serializer = GoodsTypeSerializer(goodstype, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def goodstype_detail(request, pk):
-    goodstype = GoodsType.objects.get(id=pk)
-    serializer = GoodsTypeSerializer(goodstype, many=False)
-    return Response(serializer.data)
-
-@permission_classes([permissions.IsAuthenticated])
-@api_view(['POST'])
-def goodstype_create(request):
-    serializer = GoodsTypeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@permission_classes([permissions.IsAuthenticated])
-@api_view(['PATCH'])
-def goodstype_update(request, id):
-    school = GoodsType.objects.get(id=id)
-    serializer = GoodsTypeSerializer(instance=school, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+    if request.method == 'GET':
+        if pk:
+            goodstype = GoodsType.objects.get(id=pk)
+            serializer = GoodsTypeSerializer(goodstype, many=False)
+        else:
+            goodstype = GoodsType.objects.all()
+            serializer = GoodsTypeSerializer(goodstype, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = GoodsTypeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'PATCH':
+        goodstype = GoodsType.objects.get(id=pk)
+        serializer = GoodsTypeSerializer(instance=goodstype, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        goodstype = GoodsType.objects.get(id=pk)
+        goodstype.delete()
+        return Response('Item deleted', status=status.HTTP_204_NO_CONTENT)

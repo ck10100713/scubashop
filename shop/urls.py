@@ -24,16 +24,13 @@ from django.conf.urls.static import static
 app_name = 'shop'
 
 urlpatterns = [
-    path('', views.index_views, name='index'),
-    path('shop/', views.shop_views, name='shop'),
+    path('index/', views.index_views, name='index'),
+    path('', views.shop_views, name='shop'),
     path('product/<int:product_id>/', views.product_detail_views, name='product_detail'),
-    path('get/shop_api', views.api_overview, name='api_overview'),
-    path('get/goods', views.goods_list, name='goods_list'),
-    path('get/goods/<int:pk>/', views.goods_detail, name='goods_detail'),
-    path('create/goods', views.goods_create, name='goods_create'),
-    path('update/goods/<int:pk>/', views.goods_update, name='goods_update'),
-    path('get/goodstype', views.goodstype_list, name='goodstype_list'),
-    path('get/goodstype/<int:pk>/', views.goodstype_detail, name='goodstype_detail'),
-    path('create/goodstype', views.goodstype_create, name='goodstype_create'),
-    path('update/goodstype/<int:pk>/', views.goodstype_update, name='goodstype_update'),
+    # api
+    path('api/', views.api_overview, name='api-overview'),
+    path('api/goods', views.goods, name='goods'),
+    path('api/goods/<str:pk>/', views.goods, name='goods-detail'),
+    path('api/goodstype', views.goodstype, name='goodstype'),
+    path('api/goodstype/<str:pk>/', views.goodstype, name='goodstype-detail'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
