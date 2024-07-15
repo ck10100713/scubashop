@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}個人資料{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <h2 class="mt-5">個人資料</h2>
+        <ul>
+            <li><strong>使用者名稱:</strong> {{ user.username }}</li>
+            <li><strong>信箱:</strong> {{ user.email }}</li>
+            <li><strong>收件人姓名:</strong> {{ user_profile.recipient_name }}</li>
+            <li><strong>收件人手機\電話號碼:</strong> {{ user_profile.phone_number }}</li>
+            <li><strong>收件人地址:</strong> {{ user_profile.address }}</li>
+            <!-- 添加更多用戶資料 -->
+        </ul>
+        <hr>
+        <h3>編輯個人資料</h3>
+        <form method="post" action="{% url 'account:edit_profile' %}">
+            {% csrf_token %}
+            {{ profile_form.as_p }}
+            <button type="submit" class="btn btn-primary">更新資料</button>
+        </form>
+        <hr>
+        <h3>修改密碼</h3>
+        <a href="{% url 'account:change_password' %}" class="btn btn-primary">修改密碼</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django import forms
-from .models import Register
+from .models import UserProfile
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(
@@ -35,3 +34,8 @@ class LoginForm(forms.Form):
         label="密碼",
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['recipient_name', 'phone_number', 'address', 'email_verified', 'phone_verified']

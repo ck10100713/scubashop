@@ -1,11 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
-class Register(models.Model):
-    username = models.CharField(max_length=150, unique=True)
-    phone = models.CharField(max_length=15)
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    recipient_name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20)
+    address = models.TextField()
+    email_verified = models.BooleanField(default=False)
+    phone_verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.username
+        return self.user.username
