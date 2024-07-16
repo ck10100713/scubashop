@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth import authenticate, login, logout, get_user_model, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, DefaultRecipient
@@ -99,8 +100,18 @@ def edit_profile(request):
 
 @login_required
 def change_password(request):
-    # 可以在這裡修改用戶的密碼
-    return render(request, 'account/changepassword.html')
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # 重要！更新用户的会话以防止注销
+            return redirect('account:profile')
+        else:
+            # 表单无效，处理错误
+            print(form.errors)
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'account/change_password.html', {'form': form})
 
 
 @login_required
