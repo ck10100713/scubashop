@@ -1,6 +1,5 @@
-<!-- order/templates/order/order_create.html -->
 {% extends "base.html" %}
-{% block title %}創建訂單{% endblock %}
+{% block title %}確認訂單{% endblock %}
 {% block content %}
 <h2>確認訂單</h2>
 <table>
@@ -43,6 +42,7 @@
 </table>
 <form method="post">
     {% csrf_token %}
-    <button type="submit">繼續結帳</button>
+    <button type="button" class="btn btn-secondary" onclick="history.back()">返回上一頁</button>
+    <button type="submit" class="btn btn-primary">繼續結帳</button>
 </form>
 {% endblock %}

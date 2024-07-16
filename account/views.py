@@ -113,7 +113,6 @@ def change_password(request):
         form = PasswordChangeForm(request.user)
     return render(request, 'account/change_password.html', {'form': form})
 
-
 @login_required
 def verify_email(request):
     user_profile = request.user.userprofile

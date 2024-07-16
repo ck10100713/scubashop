@@ -10,12 +10,25 @@ from rest_framework import status, permissions
 from django.shortcuts import get_object_or_404
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderItemSerializer, OrderSummarySerializer
+from django.contrib import messages
+from account.models import DefaultRecipient, UserProfile
+
+# @login_required
+# def order_check(request):
+#     cart_items = Cart.objects.filter(user=request.user)
+#     total_price = sum(item.get_total_price() for item in cart_items)
+#     if total_price == 0:
+#         return redirect('cart:cart_detail')
+#     if request.method == 'POST':
+#         return redirect('orders:order_create')
+#     return render(request, 'orders/order_check.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def order_check(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.get_total_price() for item in cart_items)
     if total_price == 0:
+        messages.warning(request, '您的購物車內沒有商品')
         return redirect('cart:cart_detail')
     if request.method == 'POST':
         return redirect('orders:order_create')
@@ -26,13 +39,25 @@ def order_create(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.get_total_price() for item in cart_items)
 
+    # 获取默认收件人信息
+    try:
+        default_recipient = DefaultRecipient.objects.get(user=request.user)
+    except DefaultRecipient.DoesNotExist:
+        default_recipient = None
+
+    # # 获取用户资料信息
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
+
     if request.method == 'POST':
         form_data = request.POST  # 获取POST请求的数据
 
         # 提取表单数据
-        name = form_data.get('name')
-        address = form_data.get('address')
-        contact_number = form_data.get('contact_number')
+        name = form_data.get('recipient_name')
+        address = form_data.get('recipient_address')
+        contact_number = form_data.get('recipient_number')
         email = form_data.get('email')
         credit_card = form_data.get('credit_card')
         # total_price = sum(item.get_total_price() for item in cart_items)
@@ -59,7 +84,13 @@ def order_create(request):
         cart_items.delete()
         # 重定向到订单详情页面
         return redirect('orders:order_detail', order_id=order.id)
-    return render(request, 'orders/order_create.html', {'cart_items': cart_items, 'total_price': total_price})
+
+    return render(request, 'orders/order_create.html', {
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'default_recipient': default_recipient,
+        'user_profile': user_profile
+    })
 
 @login_required
 def order_detail(request, order_id):
@@ -71,6 +102,11 @@ def order_detail(request, order_id):
     else:
         # 如果用戶沒有權限查看訂單，返回403禁止訪問
         return render(request, '403.html')  # 確保有一個403.html模板文件
+
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'orders/order_history.html', {'orders': orders})
 
 @api_view(['GET'])
 def api_overview(request):

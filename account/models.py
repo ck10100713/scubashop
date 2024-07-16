@@ -11,7 +11,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
 class DefaultRecipient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     recipient_name = models.CharField(max_length=100)

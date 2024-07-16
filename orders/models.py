@@ -20,7 +20,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=10, decimal_places=0)  # 保留两位小数的十进制字段
+    price = models.DecimalField(max_digits=10, decimal_places=0)
     quantity = models.PositiveIntegerField(default=1)
 
     def get_total_price(self):
