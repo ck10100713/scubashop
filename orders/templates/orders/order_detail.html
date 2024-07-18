@@ -23,7 +23,7 @@
         <h3>商品明細：</h3>
         <ul>
             {% for item in order.items.all %}
-                <li>{{ item.goods.title }} - {{ item.quantity }} x NT${{ item.price }}</li>
+                <li>{{ item.product.name }} - {{ item.quantity }} x NT${{ item.price }}</li>
             {% endfor %}
         </ul>
 

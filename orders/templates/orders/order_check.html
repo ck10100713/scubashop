@@ -14,12 +14,12 @@
             <tr>
                 <td class="col-sm-8 col-md-6">
                     <div class="media">
-                        <a class="thumbnail pull-left" href="{{ item.goods.get_absolute_url }}">
-                            <img class="media-object" src="{{ item.goods.picture.url }}" style="width: 72px; height: 72px;">
+                        <a class="thumbnail pull-left" href="{{ item.product.get_absolute_url }}">
+                            <img class="media-object" src="{{ item.product.image.url }}" style="width: 72px; height: 72px;">
                         </a>
                         <div class="media-body">
                             <h4 class="media-heading">
-                                <a href="{{ item.goods.get_absolute_url }}">{{ item.goods.title }}</a>
+                                <a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
                             </h4>
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                 <td class="col-sm-1 col-md-1" style="text-align: center">
                     {{ item.amount }}
                 </td>
-                <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.goods.price }}</strong></td>
+                <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.product.price }}</strong></td>
                 <td class="col-sm-1 col-md-1 text-center"><strong>NT${{ item.get_total_price }}</strong></td>
             </tr>
         {% endfor %}

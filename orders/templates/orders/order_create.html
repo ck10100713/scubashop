@@ -12,7 +12,7 @@
         <h3>您的購物車商品：</h3>
         <ul>
             {% for item in cart_items %}
-                <li>{{ item.goods.title }} - {{ item.amount }} x NT${{ item.goods.price }}</li>
+                <li>{{ item.product.name }} - {{ item.amount }} x NT${{ item.product.price }}</li>
             {% endfor %}
         </ul>
         

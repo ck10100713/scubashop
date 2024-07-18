@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Cart
-from shop.models import Goods
+from shop.models import Product, Category, ProductImage
 
 @login_required
 def cart_detail(request):
@@ -10,18 +10,18 @@ def cart_detail(request):
     return render(request, 'cart/cart_detail.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
-def add_to_cart(request, goods_id):
-    goods = get_object_or_404(Goods, id=goods_id)
-    cart_item, created = Cart.objects.get_or_create(user=request.user, goods=goods)
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
     if not created:
         cart_item.amount += 1
         cart_item.save()
     return redirect('cart:cart_detail')
 
 @login_required
-def remove_from_cart(request, goods_id):
-    goods = get_object_or_404(Goods, id=goods_id)
-    cart_item = Cart.objects.get(user=request.user, goods=goods)
+def remove_from_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = Cart.objects.get(user=request.user, product=product)
     if cart_item.amount > 1:
         cart_item.amount -= 1
         cart_item.save()
@@ -30,9 +30,9 @@ def remove_from_cart(request, goods_id):
     return redirect('cart:cart_detail')
 
 @login_required
-def delete_from_cart(request, goods_id):
-    goods = get_object_or_404(Goods, id=goods_id)
-    cart_item = Cart.objects.get(user=request.user, goods=goods)
+def delete_from_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = Cart.objects.get(user=request.user, product=product)
     cart_item.delete()
     return redirect('cart:cart_detail')
 

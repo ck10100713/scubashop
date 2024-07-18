@@ -1,37 +1,17 @@
-# from django import forms
-# from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User
-# from django import forms
-# from .models import Register
+from django import forms
+from .models import Product, Category
 
-# class RegisterForm(UserCreationForm):
-#     username = forms.CharField(
-#         label="用户名",
-#         widget=forms.TextInput(attrs={'class': 'form-control'})
-#     )
-#     email = forms.EmailField(
-#         label="电子邮件",
-#         widget=forms.EmailInput(attrs={'class': 'form-control'})
-#     )
-#     password1 = forms.CharField(
-#         label="密码",
-#         widget=forms.PasswordInput(attrs={'class': 'form-control'})
-#     )
-#     password2 = forms.CharField(
-#         label="确认密码",
-#         widget=forms.PasswordInput(attrs={'class': 'form-control'})
-#     )
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'categories', 'price', 'description', 'size', 'color', 'brand', 'image']
 
-#     class Meta:
-#         model = User
-#         fields = ('username', 'email', 'password1', 'password2')
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
 
-# class LoginForm(forms.Form):
-#     username = forms.CharField(
-#         label="用户名",
-#         widget=forms.TextInput(attrs={'class': 'form-control'})
-#     )
-#     password = forms.CharField(
-#         label="密码",
-#         widget=forms.PasswordInput(attrs={'class': 'form-control'})
-#     )
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']

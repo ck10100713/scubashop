@@ -26,11 +26,17 @@ app_name = 'shop'
 urlpatterns = [
     path('index/', views.index_views, name='index'),
     path('', views.shop_views, name='shop'),
+    # path('create_product/', views.create_product, name='create_product'),
+    # path('create_category/', views.create_category, name='create_category'),
     path('product/<int:product_id>/', views.product_detail_views, name='product_detail'),
+    path('photo/', views.photo_views, name='photo'),
     # api
     path('api/', views.api_overview, name='api-overview'),
     path('api/goods', views.goods, name='goods'),
     path('api/goods/<str:pk>/', views.goods, name='goods-detail'),
     path('api/goodstype', views.goodstype, name='goodstype'),
     path('api/goodstype/<str:pk>/', views.goodstype, name='goodstype-detail'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+# urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

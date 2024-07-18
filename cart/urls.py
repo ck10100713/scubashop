@@ -5,9 +5,9 @@ app_name = 'cart'
 
 urlpatterns = [
     path('', views.cart_detail, name='cart_detail'),
-    path('add/<int:goods_id>/', views.add_to_cart, name='add_to_cart'),
-    path('remove/<int:goods_id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('delete/<int:goods_id>/', views.delete_from_cart, name='delete_from_cart'),
+    path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('delete/<int:product_id>/', views.delete_from_cart, name='delete_from_cart'),
     # api
     path('api/', views.api_overview, name='api_overview'),
     path('api/cart/all', views.cart_list, name='cart_list'),

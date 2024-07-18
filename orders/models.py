@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from shop.models import Goods
+from shop.models import Product, Category, ProductImage
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
@@ -19,7 +19,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    products = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=0)
     quantity = models.PositiveIntegerField(default=1)
 
@@ -27,4 +27,4 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
     def __str__(self):
-        return f'{self.quantity} of {self.goods.title}'
+        return f'{self.quantity} of {self.products.name}'

@@ -86,6 +86,12 @@ def edit_profile(request):
             profile_form.save()
             recipient_form.save()
             return redirect('account:profile')  # 重定向到個人資料頁面
+        if  profile_form.is_valid():
+            profile_form.save()
+            return redirect('account:profile')
+        if recipient_form.is_valid():
+            recipient_form.save()
+            return redirect('account:profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
         recipient_form = DefaultRecipientForm(instance=default_recipient)

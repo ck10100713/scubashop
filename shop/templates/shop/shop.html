@@ -8,9 +8,9 @@
         <!-- 商品类别筛选栏 -->
         <div class="col-lg-3 col-md-4">
             <div class="list-group">
-                <a href="{% url 'shop:index' %}" class="list-group-item list-group-item-action">全部商品</a>
+                <a href="{% url 'shop:shop' %}" class="list-group-item list-group-item-action">全部商品</a>
                 {% for category in categories %}
-                <a href="?category={{ category.id }}" class="list-group-item list-group-item-action{% if category.id == selected_category %} active{% endif %}">{{ category.title }}</a>
+                <a href="?category={{ category.id }}" class="list-group-item list-group-item-action{% if category.id == selected_category %} active{% endif %}">{{ category.name }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -20,7 +20,13 @@
                 {% for product in products %}
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
-                        <a href="{% url 'shop:product_detail' product.pk %}"><img class="card-img-top" src="{{ product.picture.url }}" alt="{{ product.title }}"></a>
+                        <a href="{% url 'shop:product_detail' product.pk %}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                            {% else %}
+                                <img src="static/img/no_image.png" alt="no image" class="img-fluid">
+                            {% endif %}
+                        </a>
                         <div class="card-body">
                             <h4 class="card-title">
                                 <a href="{% url 'shop:product_detail' product.pk %}">{{ product.title }}</a>

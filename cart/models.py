@@ -1,15 +1,15 @@
 # cart/models.py
 from django.db import models
 from django.contrib.auth.models import User
-from shop.models import Goods
+from shop.models import Product, Category, ProductImage
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    goods = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=1)
 
     def get_total_price(self):
-        return self.goods.price * self.amount
+        return self.product.price * self.amount
 
     class Meta:
-        unique_together = ('user', 'goods')
+        unique_together = ('user', 'product')

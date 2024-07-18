@@ -3,29 +3,62 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Goods, GoodsType
+from .models import Product, Category, ProductImage
 from django.contrib.auth.forms import UserCreationForm
+from .forms import ProductForm, CategoryForm
+from rest_framework.decorators import permission_classes
+from rest_framework import permissions
 
 def index_views(request):
-    products = Goods.objects.filter(isActive=True).order_by('-id')[:3]
+    products = Product.objects.filter(isActive=True).order_by('-id')[:3]
     context = {
         'products': products
     }
     return render(request, 'index.html', context)
 
 def shop_views(request):
-    categories = GoodsType.objects.all()
-    products = Goods.objects.filter(isActive=True)
+    categories = Category.objects.all()
+    products = Product.objects.filter(isActive=True)
     category_id = request.GET.get('category')
     if category_id:
-        products = products.filter(goodsType_id=category_id)
+        products = products.filter(categories__id=category_id)
     context = {
         'categories': categories,
         'products': products,
     }
     return render(request, 'shop/shop.html', context)
 
+def photo_views(request):
+    products = Product.objects.all()
+    context = {
+        'products': products
+    }
+    return render(request, 'shop/photo.html', context)
+
+# @permission_classes([permissions.IsAdminUser])
+# def create_product(request):
+#     if request.method == 'POST':
+#         form = ProductForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('create_product')   # 假设你有一个 product_list 的 URL 名称
+#     else:
+#         form = ProductForm()
+#     return render(request, 'shop/create_product.html', {'form': form})
+
+# @permission_classes([permissions.IsAdminUser])
+# def create_category(request):
+#     if request.method == 'POST':
+#         form = CategoryForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('create_category')   # 假设你有一个 category_list 的 URL 名称
+#     else:
+#         form = CategoryForm()
+#     return render(request, 'shop/category_form.html', {'form': form})
+
 def product_detail_views(request, product_id):
-    product = get_object_or_404(Goods, id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     context = {
         'product': product
     }

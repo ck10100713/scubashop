@@ -4,7 +4,7 @@ from .models import Order, OrderItem
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    raw_id_fields = ['goods']
+    raw_id_fields = ['products']
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -14,5 +14,5 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'order', 'goods', 'price', 'quantity']
-    list_filter = ['order', 'goods']
+    list_display = ['id', 'order', 'products', 'price', 'quantity']
+    list_filter = ['order', 'products']

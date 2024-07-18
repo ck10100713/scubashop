@@ -76,8 +76,8 @@ def order_create(request):
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
-                goods=item.goods,
-                price=item.goods.price,
+                products=item.product,
+                price=item.product.price,
                 quantity=item.amount
             )
         # 清空购物车
