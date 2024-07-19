@@ -32,10 +32,8 @@ urlpatterns = [
     path('photo/', views.photo_views, name='photo'),
     # api
     path('api/', views.api_overview, name='api-overview'),
-    path('api/goods', views.goods, name='goods'),
-    path('api/goods/<str:pk>/', views.goods, name='goods-detail'),
-    path('api/goodstype', views.goodstype, name='goodstype'),
-    path('api/goodstype/<str:pk>/', views.goodstype, name='goodstype-detail'),
+    path('api/products', views.products, name='goods'),
+    path('api/products/<str:pk>/', views.products, name='goods-detail'),
 ]
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
