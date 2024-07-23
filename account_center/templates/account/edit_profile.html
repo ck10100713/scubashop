@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}編輯個人資料{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <h2 class="mt-5">編輯個人資料</h2>
+        <form method="post" action="{% url 'account:edit_profile' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" value="{{ profile_form.name.value }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="phone_number">手機號碼：</label>
+                <input type="text" id="phone_number" name="phone_number" value="{{ profile_form.phone_number.value }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email">Email：</label>
+                <input type="email" id="email" name="email" value="{{ profile_form.email.value }}" class="form-control">
+            </div>
+            <h3 class="mt-5">預設收件人資料</h3>
+            <div class="form-group">
+                <label for="recipient_name">收件人姓名：</label>
+                <input type="text" id="recipient_name" name="recipient_name" value="{{ recipient_form.recipient_name.value }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="recipient_phone_number">收件人手機\電話號碼：</label>
+                <input type="text" id="recipient_phone_number" name="recipient_phone_number" value="{{ recipient_form.recipient_phone_number.value }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="recipient_address">收件人地址：</label>
+                <textarea id="recipient_address" name="recipient_address" class="form-control">{{ recipient_form.recipient_address.value }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">保存變更</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
