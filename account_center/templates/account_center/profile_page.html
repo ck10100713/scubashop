@@ -24,7 +24,7 @@
                             <span class="badge badge-success ml-2">已驗證</span>
                         {% else %}
                             <span class="badge badge-danger ml-2">未驗證</span>
-                            <a href="{% url 'account:verify_phone' %}" class="btn btn-sm btn-outline-primary ml-2">驗證手機</a>
+                            <a href="{% url 'account_center:verify_phone' %}" class="btn btn-sm btn-outline-primary ml-2">驗證手機</a>
                         {% endif %}
                     </p>
                 </div>
@@ -35,7 +35,7 @@
                             <span class="badge badge-success ml-2">已驗證</span>
                         {% else %}
                             <span class="badge badge-danger ml-2">未驗證</span>
-                            <a href="{% url 'account:verify_email' %}" class="btn btn-sm btn-outline-primary ml-2">驗證電子信箱</a>
+                            <a href="{% url 'account_center:verify_email' %}" class="btn btn-sm btn-outline-primary ml-2">驗證電子信箱</a>
                         {% endif %}
                     </p>
                 </div>

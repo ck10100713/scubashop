@@ -20,7 +20,7 @@ def register_view(request):
             return redirect('/')  # 注册成功后重定向到首页或其他页面
     else:
         form = RegisterForm()
-    return render(request, 'account/register.html', {'form': form})
+    return render(request, 'account_center/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -37,7 +37,7 @@ def login_view(request):
                 form.add_error(None, '無效的用戶名或密碼')
     else:
         form = LoginForm()
-    return render(request, 'account/login.html', {'form': form})
+    return render(request, 'account_center/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
@@ -46,13 +46,13 @@ def logout_view(request):
 # @login_required
 # def profile_view(request):
 #     user_profile = get_object_or_404(UserProfile, user=request.user)
-#     return render(request, 'account/profile_page.html', {'user_profile': user_profile})
+#     return render(request, 'account_center/profile_page.html', {'user_profile': user_profile})
 
 @login_required
 def profile_views(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
     default_recipient = get_object_or_404(DefaultRecipient, user=request.user)
-    return render(request, 'account/profile_page.html', {
+    return render(request, 'account_center/profile_page.html', {
         'user_profile': user_profile,
         'default_recipient': default_recipient
     })
@@ -67,11 +67,11 @@ def profile_views(request):
 #             print('save start')
 #             form.save()
 #             print('save scuccess')
-#             return redirect('account:profile')  # 重定向到個人資料頁面
+#             return redirect('account_center:profile')  # 重定向到個人資料頁面
 #     else:
 #         print('save fail')
 #         form = UserProfileForm(instance=user_profile)
-#     return render(request, 'account/edit_profile.html', {'form': form, 'user_profile': user_profile, 'user': user})
+#     return render(request, 'account_center/edit_profile.html', {'form': form, 'user_profile': user_profile, 'user': user})
 
 @login_required
 def edit_profile(request):
@@ -85,18 +85,18 @@ def edit_profile(request):
         if profile_form.is_valid() and recipient_form.is_valid():
             profile_form.save()
             recipient_form.save()
-            return redirect('account:profile')  # 重定向到個人資料頁面
+            return redirect('account_center:profile')  # 重定向到個人資料頁面
         if  profile_form.is_valid():
             profile_form.save()
-            return redirect('account:profile')
+            return redirect('account_center:profile')
         if recipient_form.is_valid():
             recipient_form.save()
-            return redirect('account:profile')
+            return redirect('account_center:profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
         recipient_form = DefaultRecipientForm(instance=default_recipient)
 
-    return render(request, 'account/edit_profile.html', {
+    return render(request, 'account_center/edit_profile.html', {
         'profile_form': profile_form,
         'recipient_form': recipient_form,
         'user_profile': user_profile,
@@ -111,13 +111,13 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # 重要！更新用户的会话以防止注销
-            return redirect('account:profile')
+            return redirect('account_center:profile')
         else:
             # 表单无效，处理错误
             print(form.errors)
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'account/change_password.html', {'form': form})
+    return render(request, 'account_center/change_password.html', {'form': form})
 
 @login_required
 def verify_email(request):
@@ -125,7 +125,7 @@ def verify_email(request):
     # 處理驗證邏輯
     user_profile.email_verified = True
     user_profile.save()
-    return redirect('account:edit_profile')
+    return redirect('account_center:edit_profile')
 
 @login_required
 def verify_phone(request):
@@ -133,4 +133,4 @@ def verify_phone(request):
     # 處理驗證邏輯
     user_profile.phone_verified = True
     user_profile.save()
-    return redirect('account:edit_profile')
+    return redirect('account_center:edit_profile')

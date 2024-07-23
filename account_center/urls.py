@@ -5,7 +5,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-app_name = 'account'
+app_name = 'account_center'
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),
