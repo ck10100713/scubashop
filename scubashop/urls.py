@@ -27,7 +27,7 @@ urlpatterns = [
     path('', index_views, name='index'),
     path('shop/', include('shop.urls')),
     path('cart/', include('cart.urls')),
-    path('account/', include('account.urls')),
+    path('account_center/', include('account_center.urls')),
     path('orders/', include('orders.urls')),
     # api
     # path('api/', include('shop.urls')),

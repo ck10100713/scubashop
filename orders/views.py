@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderItemSerializer, OrderSummarySerializer
 from django.contrib import messages
-from account.models import DefaultRecipient, UserProfile
+from account_center.models import DefaultRecipient, UserProfile
 
 # @login_required
 # def order_check(request):
