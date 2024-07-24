@@ -14,6 +14,8 @@ urlpatterns = [
     path('profile/', views.profile_views, name='profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('change_password/', views.change_password, name='change_password'),
+    # oauth
+    # path('accounts/', include('allauth.urls')),
     # unfinished
     # path('profile/<int:pk>/', views.profile_views, name='profile'),
     path('verify_email/', views.verify_email, name='verify_email'),
