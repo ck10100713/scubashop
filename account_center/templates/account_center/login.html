@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load socialaccount %}
 
 {% block title %}登入{% endblock %}
 
@@ -12,6 +13,12 @@
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">登入</button>
         </form>
+        <hr>
+        <h3>使用第三方帐户登录</h3>
+        <a href="#" class="btn btn-danger">使用 Google 登入</a>
+        <a href="#" class="btn btn-primary">使用 Facebook 登入</a>
+        <a href="{% provider_login_url 'github' %}" class="btn btn-info">使用 github 登入</a>
+        <!-- 更多第三方登录按钮 -->
     </div>
 </div>
 {% endblock %}

@@ -32,4 +32,6 @@ urlpatterns = [
     # api
     # path('api/', include('shop.urls')),
     # path('api/', include('orders.urls')),
+    # oauth
+    path('accounts/', include('allauth.urls')),
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
