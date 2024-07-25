@@ -169,3 +169,16 @@ MESSAGE_TAGS = {
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'danger',
 }
+
+
+import os
+from dotenv import load_dotenv
+
+# 找到 manage.py 文件所在的目录
+
+# 加载 .env 文件
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# 从环境变量中获取敏感信息
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
