@@ -58,8 +58,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # allauth的认证后台
 ]
 
-SOCIAL_AUTH_GITHUB_KEY = 'Ov23liVXpOy29yp8Rr45'
-SOCIAL_AUTH_GITHUB_SECRET = 'd776f0befe2da1e41431d2fe5caba919eed43e34'
+# SOCIAL_AUTH_GITHUB_KEY = 'Ov23liVXpOy29yp8Rr45'
+# SOCIAL_AUTH_GITHUB_SECRET = 'd776f0befe2da1e41431d2fe5caba919eed43e34'
 
 SITE_ID = 1  # 确保您有这个设置
 
@@ -143,7 +143,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/account/login/'
+LOGIN_URL = '/account_center/login/'
 LOGOUT_REDIRECT_URL = '/'
 
 STATIC_URL = '/static/'
