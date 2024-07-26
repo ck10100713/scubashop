@@ -15,12 +15,19 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import os
+from dotenv import load_dotenv
+
+# 找到 manage.py 文件所在的目录
+
+# 加载 .env 文件
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_-ihv+e67x2991fhonaty8^3d)q=*rxy6e@8p^%3nd3!bsb47a'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -170,34 +177,30 @@ MESSAGE_TAGS = {
 }
 
 
-import os
-from dotenv import load_dotenv
 
-# 找到 manage.py 文件所在的目录
-
-# 加载 .env 文件
-load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # 从环境变量中获取敏感信息
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google': {
-#         'APP': {
-#             'client_id': GOOGLE_CLIENT_ID,
-#             'secret': GOOGLE_CLIENT_SECRET,
-#             'key': ''
-#         }
-#     },
-#     'github': {
-#         'APP': {
-#             'client_id': 'YOUR_GITHUB_CLIENT_ID',
-#             'secret': 'YOUR_GITHUB_CLIENT_SECRET',
-#             'key': ''
-#         }
-#     }
-# }
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': ''
+        }
+    },
+    'github': {
+        'APP': {
+            'client_id': GITHUB_CLIENT_ID,
+            'secret': GITHUB_CLIENT_SECRET,
+            'key': ''
+        }
+    }
+}
 
 ACCOUNT_SIGNUP_REDIRECT_URL = 'complete_profile/'
 ACCOUNT_LOGIN_REDIRECT_URL = 'complete_profile/'
