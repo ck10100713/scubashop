@@ -5,7 +5,7 @@ from .forms import RegisterForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, DefaultRecipient
 from django.shortcuts import get_object_or_404
-from .forms import UserProfileForm, DefaultRecipientForm
+from .forms import UserProfileForm, DefaultRecipientForm, CompleteProfileForm
 
 def register_view(request):
     if request.method == 'POST':
@@ -49,13 +49,27 @@ def logout_view(request):
 #     return render(request, 'account_center/profile_page.html', {'user_profile': user_profile})
 
 @login_required
-def profile_views(request):
+def profile_view(request):
+
     user_profile = get_object_or_404(UserProfile, user=request.user)
     default_recipient = get_object_or_404(DefaultRecipient, user=request.user)
+
     return render(request, 'account_center/profile_page.html', {
         'user_profile': user_profile,
-        'default_recipient': default_recipient
+        'default_recipient': default_recipient,
     })
+
+@login_required
+def complete_profile_view(request):
+    user = request.user
+    if request.method == 'POST':
+        form = CompleteProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # 重定向到用户的个人资料页面
+    else:
+        form = CompleteProfileForm(instance=user)
+    return render(request, 'account_center/complete_profile.html', {'form': form})
 
 # @login_required
 # def edit_profile(request):

@@ -86,3 +86,12 @@ class DefaultRecipientForm(forms.ModelForm):
             'recipient_phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'recipient_address': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+# for oauth
+class CompleteProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
+        widgets = {
+            'email': forms.EmailInput(attrs={'readonly': 'readonly'})
+        }

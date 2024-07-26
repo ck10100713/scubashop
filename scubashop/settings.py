@@ -58,8 +58,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',  # allauth的认证后台
 ]
 
-# SOCIAL_AUTH_GITHUB_KEY = 'Ov23liVXpOy29yp8Rr45'
-# SOCIAL_AUTH_GITHUB_SECRET = 'd776f0befe2da1e41431d2fe5caba919eed43e34'
+
 
 SITE_ID = 1  # 确保您有这个设置
 
@@ -182,3 +181,23 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # 从环境变量中获取敏感信息
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'APP': {
+#             'client_id': GOOGLE_CLIENT_ID,
+#             'secret': GOOGLE_CLIENT_SECRET,
+#             'key': ''
+#         }
+#     },
+#     'github': {
+#         'APP': {
+#             'client_id': 'YOUR_GITHUB_CLIENT_ID',
+#             'secret': 'YOUR_GITHUB_CLIENT_SECRET',
+#             'key': ''
+#         }
+#     }
+# }
+
+ACCOUNT_SIGNUP_REDIRECT_URL = 'complete_profile/'
+ACCOUNT_LOGIN_REDIRECT_URL = 'complete_profile/'

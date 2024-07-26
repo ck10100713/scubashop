@@ -9,17 +9,20 @@
 
 ## 未解決問題（避開）
    - 上傳圖片問題
+   - SOCIALACCOUNT_PROVIDERS settings
 
 ## 待優化功能
    - race condition
    - 圖片格式統一
    - 除錯處理
+   - settings保密處理
 
 ### 待開發功能
    - OAuth
    - 一開始手機號碼可以隨便輸入，但若是跟已認證的衝突要顯示
    - 會員系統
    - 定期清理撤下圖片庫
+   - 上aws部署
 
 ### 功能測試
    - 完整訂單
