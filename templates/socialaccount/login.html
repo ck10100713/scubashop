@@ -1,31 +1,44 @@
-{% extends "socialaccount/base_entrance.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load allauth %}
 {% block head_title %}
-    {% trans "Sign In" %}
+    使用第三方帳號登入
 {% endblock head_title %}
 {% block content %}
-    {% if process == "connect" %}
-        {% element h1 %}
-            {% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}
-        {% endelement %}
-        {% element p %}
-            {% blocktrans with provider.name as provider %}You are about to connect a new third-party account from {{ provider }}.{% endblocktrans %}
-        {% endelement %}
-    {% else %}
-        {% element h1 %}
-            {% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}
-        {% endelement %}
-        {% element p %}
-            {% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}
-        {% endelement %}
-    {% endif %}
-    {% element form method="post" no_visible_fields=True %}
-        {% slot actions %}
-            {% csrf_token %}
-            {% element button type="submit" %}
-                {% trans "Continue" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    {% if process == "connect" %}
+                        <h2 class="card-title text-center">
+                            連接 {{ provider }}
+                        </h2>
+                    {% else %}
+                        <h2 class="card-title text-center">
+                            使用 {{ provider }} 登入
+                        </h2>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if process == "connect" %}
+                        <p class="text-center">
+                            您即將連接來自 {{ provider }} 的新第三方帳號。
+                        </p>
+                    {% else %}
+                        <p class="text-center">
+                            您即將使用 {{ provider }} 的第三方帳號進行登入。
+                        </p>
+                    {% endif %}
+                    <form method="post" class="text-center">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            繼續
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

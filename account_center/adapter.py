@@ -22,15 +22,13 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def save_user(self, request, sociallogin, form=None):
-        user = sociallogin.user
-        user.save()
-        # 创建 UserProfile 对象
-        UserProfile.objects.get_or_create(user=user)
-        # 更新用户的其他信息，例如email_verified
-        socialaccount = SocialAccount.objects.filter(user=user, provider=sociallogin.account.provider).first()
-        if socialaccount:
-            user.email_verified = True
-            user.save()
+        # 调用父类的save_user方法
+        user = super().save_user(request, sociallogin, form=form)
+        # 获取或创建用户的 UserProfile
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        # 将 email_verified 设置为 True
+        profile.email_verified = True
+        profile.save()
         return user
 
     def get_login_redirect_url(self, request):
