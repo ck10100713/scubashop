@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -161,8 +161,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'media'),
 ]
 
-
-
 # settings.py
 # APPEND_SLASH = False
 CART_SESSION_ID = 'cart'  # 定義購物車在 session 中的鍵名
@@ -176,9 +174,6 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'danger',
 }
 
-
-
-
 # 从环境变量中获取敏感信息
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
@@ -187,6 +182,10 @@ GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
         'APP': {
             'client_id': GOOGLE_CLIENT_ID,
             'secret': GOOGLE_CLIENT_SECRET,
@@ -194,6 +193,10 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     },
     'github': {
+        'SCOPE': [
+            'read:user',
+            'user:email',
+        ],
         'APP': {
             'client_id': GITHUB_CLIENT_ID,
             'secret': GITHUB_CLIENT_SECRET,
@@ -202,5 +205,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-ACCOUNT_SIGNUP_REDIRECT_URL = 'complete_profile/'
-ACCOUNT_LOGIN_REDIRECT_URL = 'complete_profile/'
+ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
+
+# that is a right way to redirect user to complete profile after signup.
+ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
+ACCOUNT_LOGIN_REDIRECT_URL = '/shop/profile/'

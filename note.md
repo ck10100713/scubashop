@@ -3,13 +3,17 @@
 這份文件記錄了在開發過程中發現的問題和需要改進的功能。請根據以下清單進行修復和改進。
 
 ## 已知bug
-   - 
+   - Oauth帳號連結
+   - callback bug
+   - 登入測試黃色條小bug
+   - 無痕模式無法使用第三方登入
+
 ## 疑問
    - api內容是否要更直觀
+   - 購物車跟第三方導入衝突測試
 
 ## 未解決問題（避開）
    - 上傳圖片問題
-   - SOCIALACCOUNT_PROVIDERS settings
 
 ## 待優化功能
    - race condition
@@ -23,6 +27,8 @@
    - 會員系統
    - 定期清理撤下圖片庫
    - 上aws部署
+   - session是什麼
+   - 客製化後台
 
 ### 功能測試
    - 完整訂單
@@ -34,3 +40,4 @@
 
 ## 已修復問題
    - 0元訂單
+   - SOCIALACCOUNT_PROVIDERS settings(後台重複)

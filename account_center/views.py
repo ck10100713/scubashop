@@ -50,42 +50,36 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
 
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    default_recipient = get_object_or_404(DefaultRecipient, user=request.user)
+    try:
+        default_recipient = DefaultRecipient.objects.get(user=request.user)
+    except DefaultRecipient.DoesNotExist:
+        default_recipient = None
 
     return render(request, 'account_center/profile_page.html', {
         'user_profile': user_profile,
         'default_recipient': default_recipient,
     })
 
+# def complete_profile(request):
+#     return render(request, 'account_center/complete_profile.html')
+
 @login_required
 def complete_profile_view(request):
     user = request.user
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
     if request.method == 'POST':
         form = CompleteProfileForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('profile')  # 重定向到用户的个人资料页面
+            return redirect('account_center:profile')  # 重定向到用户的个人资料页面
     else:
         form = CompleteProfileForm(instance=user)
     return render(request, 'account_center/complete_profile.html', {'form': form})
-
-# @login_required
-# def edit_profile(request):
-#     user = request.user
-#     user_profile, created = UserProfile.objects.get_or_create(user=user)
-#     if request.method == 'POST':
-#         form = UserProfileForm(request.POST, instance=user_profile)
-#         if form.is_valid():
-#             print('save start')
-#             form.save()
-#             print('save scuccess')
-#             return redirect('account_center:profile')  # 重定向到個人資料頁面
-#     else:
-#         print('save fail')
-#         form = UserProfileForm(instance=user_profile)
-#     return render(request, 'account_center/edit_profile.html', {'form': form, 'user_profile': user_profile, 'user': user})
 
 @login_required
 def edit_profile(request):
