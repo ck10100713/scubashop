@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import UserProfile, DefaultRecipient
 from django.shortcuts import get_object_or_404
 from .forms import UserProfileForm, DefaultRecipientForm, CompleteProfileForm
+from django.http import HttpResponseRedirect
 
 def register_view(request):
     if request.method == 'POST':
@@ -64,9 +65,6 @@ def profile_view(request):
         'user_profile': user_profile,
         'default_recipient': default_recipient,
     })
-
-# def complete_profile(request):
-#     return render(request, 'account_center/complete_profile.html')
 
 @login_required
 def complete_profile_view(request):
@@ -142,3 +140,9 @@ def verify_phone(request):
     user_profile.phone_verified = True
     user_profile.save()
     return redirect('account_center:edit_profile')
+
+def google_login_view(request):
+    if request.method == 'POST':
+        # 处理 Google 登录逻辑
+        return HttpResponseRedirect('/accounts/google/login/')
+    return render(request, 'account_center/google_login.html')
