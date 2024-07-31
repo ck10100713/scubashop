@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.line',
     'allauth.socialaccount.providers.github',
+    # payment
+    'paypal.standard.ipn',
 ]
 
 AUTHENTICATION_BACKENDS = [
