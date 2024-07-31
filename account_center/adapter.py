@@ -25,7 +25,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         # 调用父类的save_user方法
         user = super().save_user(request, sociallogin, form=form)
         # 获取或创建用户的 UserProfile
-        profile, created = UserProfile.objects.get_or_create(user=user)
+        profile, created = UserProfile.objects.get_or_create(user=user, email=user.email)
         # 将 email_verified 设置为 True
         profile.email_verified = True
         profile.save()
