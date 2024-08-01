@@ -11,8 +11,6 @@ class Order(models.Model):
     address = models.TextField()
     contact_number = models.CharField(max_length=15)
     email = models.EmailField()
-    credit_card = models.CharField(max_length=16)
-    # total_price = models.DecimalField(max_digits=10, decimal_places=0, default=0)
 
     def __str__(self):
         return f'Order {self.id} by {self.user.username}'
