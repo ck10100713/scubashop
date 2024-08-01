@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'shop',
     'cart',
     'orders',
+    'payment',
     # oauth
     'django.contrib.sites',
     'allauth',
@@ -213,3 +214,11 @@ SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 # that is a right way to redirect user to complete profile after signup.
 ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
 ACCOUNT_LOGIN_REDIRECT_URL = '/shop/profile/'
+
+# payment
+PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'
+PAYPAL_TEST = True  # 設為 True 使用沙箱環境，設為 False 使用實際環境
+
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET')
+PAYPAL_MODE = 'sandbox'  # 'live' for production

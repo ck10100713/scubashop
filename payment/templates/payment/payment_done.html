@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}支付成功{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">支付成功</h1>
+    <div class="alert alert-success" role="alert">
+        <strong>恭喜！</strong> 您的支付已成功完成。
+    </div>
+    <a href="{% url 'shop:index' %}" class="btn btn-primary mt-3">返回首頁</a>
+</div>
+{% endblock %}

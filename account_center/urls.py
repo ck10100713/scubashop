@@ -21,4 +21,4 @@ urlpatterns = [
     path('verify_email/', views.verify_email, name='verify_email'),
     path('verify_phone/', views.verify_phone, name='verify_phone'),
     # api
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

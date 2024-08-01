@@ -6,6 +6,7 @@
    - 登入測試黃色條小bug
    - 無痕模式無法使用第三方登入
    - Oauth更改密碼問題
+   - upload function 選擇圖片問題
 
 ## 疑問
    - api內容是否要更直觀
@@ -39,6 +40,7 @@
    - 瀏覽紀錄
    - context-processors
    - 商店方後台使用
+   - IPN signals
 
 ### 功能測試
    - 完整訂單

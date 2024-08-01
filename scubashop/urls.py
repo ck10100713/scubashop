@@ -29,9 +29,12 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
     path('account_center/', include('account_center.urls')),
     path('orders/', include('orders.urls')),
+    path('payment/', include('payment.urls')),
     # api
     # path('api/', include('shop.urls')),
     # path('api/', include('orders.urls')),
     # oauth
     path('accounts/', include('allauth.urls')),
+    # paypal payments
+    # path('paypal/', include('paypal.standard.ipn.urls')),
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

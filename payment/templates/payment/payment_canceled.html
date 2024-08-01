@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}支付取消{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">支付取消</h1>
+    <div class="alert alert-warning" role="alert">
+        您已取消了支付。
+    </div>
+    <a href="{% url 'shop:index' %}" class="btn btn-primary mt-3">返回首頁</a>
+</div>
+{% endblock %}
