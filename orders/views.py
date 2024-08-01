@@ -12,16 +12,6 @@ from .serializers import OrderSerializer, OrderItemSerializer, OrderSummarySeria
 from django.contrib import messages
 from account_center.models import DefaultRecipient, UserProfile
 
-# @login_required
-# def order_check(request):
-#     cart_items = Cart.objects.filter(user=request.user)
-#     total_price = sum(item.get_total_price() for item in cart_items)
-#     if total_price == 0:
-#         return redirect('cart:cart_detail')
-#     if request.method == 'POST':
-#         return redirect('orders:order_create')
-#     return render(request, 'orders/order_check.html', {'cart_items': cart_items, 'total_price': total_price})
-
 @login_required
 def order_check(request):
     cart_items = Cart.objects.filter(user=request.user)
@@ -68,8 +58,6 @@ def order_create(request):
             address=address,
             contact_number=contact_number,
             email=email,
-            credit_card=credit_card,
-            # total_price=total_price
         )
         # 将购物车中的商品添加到订单项中
         for item in cart_items:
@@ -82,7 +70,8 @@ def order_create(request):
         # 清空购物车
         cart_items.delete()
         # 重定向到订单详情页面
-        return redirect('orders:order_detail', order_id=order.id)
+        # return redirect('orders:order_detail', order_id=order.id)
+        return redirect('payment:payment_process', order_id=order.id)
 
     return render(request, 'orders/order_create.html', {
         'cart_items': cart_items,

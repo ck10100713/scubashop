@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Processing{% endblock %}
+
+{% block content %}
+    <h1>Order #{{ order.id }} - Payment</h1>
+    <p>Total Amount: ${{ order.get_total_cost }}</p>
+
+    <form action="{{ form.action }}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Pay with PayPal</button>
+    </form>
+
+    <p>
+        <a href="{% url 'cart:cart_detail' %}">Cancel and return to cart</a>
+    </p>
+{% endblock %}
