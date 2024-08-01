@@ -49,7 +49,7 @@ def order_create(request):
         contact_number = form_data.get('recipient_number')
         email = form_data.get('email')
         credit_card = form_data.get('credit_card')
-        # total_price = sum(item.get_total_price() for item in cart_items)
+        amount=total_price
 
         # 创建订单
         order = Order.objects.create(
@@ -58,12 +58,13 @@ def order_create(request):
             address=address,
             contact_number=contact_number,
             email=email,
+            amount=amount,
         )
         # 将购物车中的商品添加到订单项中
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
-                products=item.product,
+                product=item.product,
                 price=item.product.price,
                 quantity=item.amount
             )

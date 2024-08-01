@@ -11,13 +11,17 @@ class Order(models.Model):
     address = models.TextField()
     contact_number = models.CharField(max_length=15)
     email = models.EmailField()
+    amount = models.DecimalField(max_digits=10, decimal_places=0, default=0)
 
     def __str__(self):
         return f'Order {self.id} by {self.user.username}'
 
+    def get_total_cost(self):
+        return sum(item.get_total_price() for item in self.items.all())
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    products = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=0)
     quantity = models.PositiveIntegerField(default=1)
 
@@ -25,4 +29,4 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
     def __str__(self):
-        return f'{self.quantity} of {self.products.name}'
+        return f'{self.quantity} of {self.product.name}'
