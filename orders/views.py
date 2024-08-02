@@ -71,9 +71,9 @@ def order_create(request):
         # 清空购物车
         cart_items.delete()
 
-        request.session['order_id'] = order.id
-        return redirect('payment:process')
-        # return redirect('payment:payment_process', order_id=order.id)
+        # request.session['order_id'] = order.id
+        # return redirect('payment:process')
+        return redirect('payment:process', order_id=order.id)
 
     return render(request, 'orders/order_create.html', {
         'cart_items': cart_items,

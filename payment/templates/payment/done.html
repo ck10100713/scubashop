@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2>付款成功</h2>
-  <p>您的付款已成功處理。</p>
-  <p>訂單編號：{{ order.id }}</p>
-  <p>訂單總金額：{{ order.amount }} USD</p>
-  <a href="{% url 'orders:order_detail' order.id %}">查看訂單詳情</a>
+  <div class="container mt-5">
+    <div class="alert alert-success">
+      <h2 class="mb-3">付款成功</h2>
+      <p>您的付款已成功處理。</p>
+      <hr>
+      <p><strong>訂單編號：</strong>{{ order.id }}</p>
+      <p><strong>訂單總金額：</strong>{{ order.amount }} USD</p>
+      <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary">查看訂單詳情</a>
+    </div>
+  </div>
 {% endblock %}

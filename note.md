@@ -3,45 +3,70 @@
 這份文件記錄了在開發過程中發現的問題和需要改進的功能。請根據以下清單進行修復和改進。
 
 ## 已知bug
+   ## 商品類
+   - upload function 選擇圖片問題
+   ## 訂單類
+   - 支付中斷購物車刪除
+   ## 支付類
+   - 重複付款
+   ## 帳號類
    - 無痕模式無法使用第三方登入
    - Oauth更改密碼問題
-   - upload function 選擇圖片問題
-   - paypal html問題
+   - 使用者名稱是否無法更改
+   ## 運營以及其他
+   - 付款相關網址上鎖，避免重複付款
    - 登入測試黃色條小bug
 
 ## 疑問
-   - api內容是否要更直觀
+   - api統一
    - 購物車跟第三方導入next衝突測試
-   - csrf_token
-   - 使用者名稱是否無法更改
 
-## 未解決問題（避開）
-   - 上傳圖片問題
+## 未解決問題
 
-## 待優化功能
-   - race condition
+### 待優化功能
+   ## 商品類
    - 圖片格式統一
-   - 自動化上傳商品
-   - 除錯處理
-   - api完善
-   - email驗證
-   - 全部程式碼整理乾淨
    - 多張商品圖
    - 不同規格商品
+   - 商品排序
+   - 加入購物車不要跳轉
+   - 購物車歸零跳通知
+   - 商品數量眾多翻頁問題
+   - 優惠碼折價券
+   ## 訂單類
+   - order_detail 顯示條修正
+   - 歷史訂單未付款可以連進付款頁面
+   - 未付款n天後刪除訂單
+   - race condition
+   - 接上地址功能(google map,7-11,全家)
+   ## 支付類
+
+   ## 帳號類
+   - email驗證
+   ## 運營以及其他
+   - 除錯處理
+   - api完善(命名規則,函數名跟名稱)
+   - 全部程式碼整理乾淨
+   - 前端圖片類
 
 ### 待開發功能
-   - 一開始手機號碼可以隨便輸入，但若是跟已認證的衝突要顯示
-   - 支付金流
-   - 臉書Oauth
+   ## 商品類
    - 定期清理撤下圖片庫
+
+   ## 訂單類
+
+   ## 支付類
+   - 支付金流extra function like email notify
+   ## 帳號類
+   - 一開始手機號碼可以隨便輸入，但若是跟已認證的衝突要顯示
+   - 臉書Oauth
+   - csrf_token
+   - csrf_exempt
+   - 瀏覽紀錄
+   ## 運營以及其他
    - 上aws部署
    - session是什麼
    - 客製化後台
-   - csrf_token
-   - 瀏覽紀錄
-   - context-processors
-   - 商店方後台使用
-   - IPN signals
 
 ### 功能測試
    - 完整訂單
@@ -49,10 +74,19 @@
    - 多人購買
 
 ### 已優化
-   -
+   ## 商品類
+   - 上傳商品腳本
+   ## 訂單類
+
+   ## 支付類
+
+   ## 帳號類
+
+   ## 運營以及其他
 
 ## 已修復問題
    - 0元訂單
-   - SOCIALACCOUNT_PROVIDERS settings(後台重複)
+   - SOCIALACCOUNT_PROVIDERS settings(後台重複刪除即可)
    - google github Oauth帳號連結
-   - settings sensitive data
+   - settings sensitive data(用env)
+   - paypal html問題(改用SDK)

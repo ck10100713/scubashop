@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <h2>付款處理</h2>
-  <p>您即將支付訂單總金額：{{ order.total }} USD</p>
+{% block title %}付款處理{% endblock %}
 
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">前往 PayPal 付款</button>
-  </form>
+{% block content %}
+  <div class="container mt-5">
+    <h2>付款處理</h2>
+    <p>您即將支付訂單總金額：${{ order.amount }} TWD</p>
+    <p>訂單編號：{{ order.id }}</p>
+    <p>收件人姓名：{{ order.name }}</p>
+    <p>收件人電子郵件：{{ order.email }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">前往 PayPal 付款</button>
+    </form>
+  </div>
 {% endblock %}
