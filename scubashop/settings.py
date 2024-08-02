@@ -34,16 +34,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.line',
     'allauth.socialaccount.providers.github',
-    # payment
-    # 'paypal.standard.ipn',
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # 默认的认证后台
-    'allauth.account.auth_backends.AuthenticationBackend',  # allauth的认证后台
+    'django.contrib.auth.backends.ModelBackend',  # Django 的默認認證後台
+    'allauth.account.auth_backends.AuthenticationBackend',  # allauth 的認證後台
 ]
 
-SITE_ID = 1  # 确保您有这个设置
+SITE_ID = 1  # 這裡的 1 是預設的站點 ID
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
