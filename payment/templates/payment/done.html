@@ -8,7 +8,7 @@
       <hr>
       <p><strong>訂單編號：</strong>{{ order.id }}</p>
       <p><strong>訂單總金額：</strong>{{ order.amount }} USD</p>
-      <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary">查看訂單詳情</a>
+      <a href="{% url 'orders:detail' order.id %}" class="btn btn-primary">查看訂單詳情</a>
     </div>
   </div>
 {% endblock %}

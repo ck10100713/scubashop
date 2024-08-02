@@ -1,16 +1,14 @@
 # order/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Order, OrderItem
+from account_center.models import DefaultRecipient, UserProfile
 from cart.models import Cart
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from django.shortcuts import get_object_or_404
-from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderItemSerializer, OrderSummarySerializer
-from django.contrib import messages
-from account_center.models import DefaultRecipient, UserProfile
 
 @login_required
 def order_check(request):
@@ -18,40 +16,33 @@ def order_check(request):
     total_price = sum(item.get_total_price() for item in cart_items)
     if total_price == 0:
         messages.warning(request, '您的購物車內沒有商品')
-        return redirect('cart:cart_detail')
+        return redirect('cart:detail')
     if request.method == 'POST':
-        return redirect('orders:order_create')
-    return render(request, 'orders/order_check.html', {'cart_items': cart_items, 'total_price': total_price})
+        return redirect('orders:create')
+    return render(request, 'orders/check.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def order_create(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.get_total_price() for item in cart_items)
-
-    # 获取默认收件人信息
     try:
         default_recipient = DefaultRecipient.objects.get(user=request.user)
     except DefaultRecipient.DoesNotExist:
         default_recipient = None
-
-    # # 获取用户资料信息
     try:
         user_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         user_profile = None
 
     if request.method == 'POST':
-        form_data = request.POST  # 获取POST请求的数据
-
-        # 提取表单数据
+        form_data = request.POST
         name = form_data.get('recipient_name')
         address = form_data.get('recipient_address')
         contact_number = form_data.get('recipient_number')
         email = form_data.get('email')
         credit_card = form_data.get('credit_card')
         amount=total_price
-
-        # 创建订单
+        # 創建訂單
         order = Order.objects.create(
             user=request.user,
             name=name,
@@ -60,7 +51,6 @@ def order_create(request):
             email=email,
             amount=amount,
         )
-        # 将购物车中的商品添加到订单项中
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
@@ -68,14 +58,12 @@ def order_create(request):
                 price=item.product.price,
                 quantity=item.amount
             )
-        # 清空购物车
+        # 清空購物車
         cart_items.delete()
-
-        # request.session['order_id'] = order.id
-        # return redirect('payment:process')
+        # 跳轉到支付頁面
         return redirect('payment:process', order_id=order.id)
 
-    return render(request, 'orders/order_create.html', {
+    return render(request, 'orders/create.html', {
         'cart_items': cart_items,
         'total_price': total_price,
         'default_recipient': default_recipient,
@@ -88,7 +76,7 @@ def order_detail(request, order_id):
     total_cost = sum(item.get_total_price() for item in order.items.all())
     if order.user == request.user or request.user.is_staff:
         total_cost = sum(item.get_total_price() for item in order.items.all())
-        return render(request, 'orders/order_detail.html', {'order': order, 'total_cost': total_cost})
+        return render(request, 'orders/detail.html', {'order': order, 'total_cost': total_cost})
     else:
         # 如果用戶沒有權限查看訂單，返回403禁止訪問
         return render(request, '403.html')  # 確保有一個403.html模板文件
@@ -96,7 +84,7 @@ def order_detail(request, order_id):
 @login_required
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'orders/order_history.html', {'orders': orders})
+    return render(request, 'orders/history.html', {'orders': orders})
 
 @api_view(['GET'])
 def api_overview(request):

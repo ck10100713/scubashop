@@ -27,35 +27,6 @@ def shop_views(request):
     }
     return render(request, 'shop/shop.html', context)
 
-def photo_views(request):
-    products = Product.objects.all()
-    context = {
-        'products': products
-    }
-    return render(request, 'shop/photo.html', context)
-
-# @permission_classes([permissions.IsAdminUser])
-# def create_product(request):
-#     if request.method == 'POST':
-#         form = ProductForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('create_product')   # 假设你有一个 product_list 的 URL 名称
-#     else:
-#         form = ProductForm()
-#     return render(request, 'shop/create_product.html', {'form': form})
-
-# @permission_classes([permissions.IsAdminUser])
-# def create_category(request):
-#     if request.method == 'POST':
-#         form = CategoryForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('create_category')   # 假设你有一个 category_list 的 URL 名称
-#     else:
-#         form = CategoryForm()
-#     return render(request, 'shop/category_form.html', {'form': form})
-
 def product_detail_views(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     context = {

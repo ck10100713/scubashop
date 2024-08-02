@@ -35,15 +35,13 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.line',
     'allauth.socialaccount.providers.github',
     # payment
-    'paypal.standard.ipn',
+    # 'paypal.standard.ipn',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # 默认的认证后台
     'allauth.account.auth_backends.AuthenticationBackend',  # allauth的认证后台
 ]
-
-
 
 SITE_ID = 1  # 确保您有这个设置
 
@@ -81,20 +79,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'scubashop.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR + '/db.sqlite3',
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -118,13 +108,6 @@ LANGUAGE_CODE = 'zh-hant'
 USE_I18N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/account_center/login/'
@@ -152,7 +135,7 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'danger',
 }
 
-# 从环境变量中获取敏感信息
+# 從 .env 檔案中讀取設定
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
@@ -188,7 +171,7 @@ SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 
 # that is a right way to redirect user to complete profile after signup.
 ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
-ACCOUNT_LOGIN_REDIRECT_URL = '/shop/profile/'
+ACCOUNT_LOGIN_REDIRECT_URL = '/shop/'
 
 # payment
 PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'

@@ -10,14 +10,14 @@
             <ul class="list-group">
                 {% for order in orders %}
                     <li class="list-group-item">
-                        <h5>訂單編號：<a href="{% url 'orders:order_detail' order.id %}">{{ order.id }}</a></h5>
+                        <h5>訂單編號：<a href="{% url 'orders:detail' order.id %}">{{ order.id }}</a></h5>
                         <p>建立時間：{{ order.created_at }}</p>
                         <p>更新時間：{{ order.updated_at }}</p>
                         <p>支付狀態：{{ order.paid|yesno:"已支付,未支付" }}</p>
                         <h6>商品列表：</h6>
                         <ul>
                             {% for item in order.items.all %}
-                                <li>{{ item.goods.title }} - {{ item.quantity }} x ${{ item.price }}</li>
+                                <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.price }}</li>
                             {% endfor %}
                         </ul>
                     </li>

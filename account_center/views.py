@@ -44,11 +44,6 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-# @login_required
-# def profile_view(request):
-#     user_profile = get_object_or_404(UserProfile, user=request.user)
-#     return render(request, 'account_center/profile_page.html', {'user_profile': user_profile})
-
 @login_required
 def profile_view(request):
     try:
@@ -61,7 +56,7 @@ def profile_view(request):
     except DefaultRecipient.DoesNotExist:
         default_recipient = None
 
-    return render(request, 'account_center/profile_page.html', {
+    return render(request, 'account_center/profile.html', {
         'user_profile': user_profile,
         'default_recipient': default_recipient,
     })
@@ -80,7 +75,7 @@ def complete_profile_view(request):
     return render(request, 'account_center/complete_profile.html', {'form': form})
 
 @login_required
-def edit_profile(request):
+def edit_profile_view(request):
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
     default_recipient, created = DefaultRecipient.objects.get_or_create(user=user)
@@ -111,7 +106,7 @@ def edit_profile(request):
     })
 
 @login_required
-def change_password(request):
+def change_password_view(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -141,8 +136,8 @@ def verify_phone(request):
     user_profile.save()
     return redirect('account_center:edit_profile')
 
-def google_login_view(request):
-    if request.method == 'POST':
-        # 处理 Google 登录逻辑
-        return HttpResponseRedirect('/accounts/google/login/')
-    return render(request, 'account_center/google_login.html')
+# def google_login_view(request):
+#     if request.method == 'POST':
+#         # 處理 Google 登入邏輯
+#         return HttpResponseRedirect('/accounts/google/login/')
+#     return render(request, 'account_center/google_login.html')

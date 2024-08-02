@@ -12,8 +12,8 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
-    path('edit_profile/', views.edit_profile, name='edit_profile'),
-    path('change_password/', views.change_password, name='change_password'),
+    path('edit_profile/', views.edit_profile_view, name='edit_profile'),
+    path('change_password/', views.change_password_view, name='change_password'),
     # oauth
     path('complete_profile/', views.complete_profile_view, name='complete_profile'),
     # unfinished

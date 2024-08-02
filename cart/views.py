@@ -7,7 +7,7 @@ from shop.models import Product, Category, ProductImage
 def cart_detail(request):
     cart_items = Cart.objects.filter(user=request.user)
     total_price = sum(item.get_total_price() for item in cart_items)
-    return render(request, 'cart/cart_detail.html', {'cart_items': cart_items, 'total_price': total_price})
+    return render(request, 'cart/detail.html', {'cart_items': cart_items, 'total_price': total_price})
 
 @login_required
 def add_to_cart(request, product_id):
@@ -16,7 +16,7 @@ def add_to_cart(request, product_id):
     if not created:
         cart_item.amount += 1
         cart_item.save()
-    return redirect('cart:cart_detail')
+    return redirect('cart:detail')
 
 @login_required
 def remove_from_cart(request, product_id):
@@ -27,15 +27,16 @@ def remove_from_cart(request, product_id):
         cart_item.save()
     else:
         cart_item.delete()
-    return redirect('cart:cart_detail')
+    return redirect('cart:detail')
 
 @login_required
 def delete_from_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart_item = Cart.objects.get(user=request.user, product=product)
     cart_item.delete()
-    return redirect('cart:cart_detail')
+    return redirect('cart:detail')
 
+# api
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CartSerializer

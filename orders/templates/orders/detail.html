@@ -1,23 +1,35 @@
 <!-- orders/templates/orders/order_detail.html -->
 {% extends "base.html" %}
-
 {% block title %}
     Order Detail
 {% endblock %}
-
 {% block content %}
     <div class="container mt-4">
-        <h2>Order Successfully Placed!</h2>
-        <div class="alert alert-success" role="alert">
-            Your order has been successfully placed. Thank you for your purchase!
-        </div>
+        <h2>訂單詳情</h2>
+        <!-- 顯示訂單成功狀態 -->
+        {% if order.paid %}
+            <div class="alert alert-success" role="alert">
+                您的訂單已成功付款。感謝您的購買！
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                訂單已成立但您尚未完成付款。
+            </div>
+        {% endif %}
         <!-- 顯示訂單詳細內容 -->
         <h3>訂單細節：</h3>
         <p><strong>姓名：</strong> {{ order.name }}</p>
         <p><strong>地址：</strong> {{ order.address }}</p>
         <p><strong>聯絡電話：</strong> {{ order.contact_number }}</p>
         <p><strong>電子信箱：</strong> {{ order.email }}</p>
-
+        <p>
+            {% if order.paid %}
+                <strong>付款狀態：</strong> 已支付
+            {% else %}
+                <strong>付款狀態：</strong> 尚未支付
+                <a href="{% url 'payment:process' order.id %}" class="btn btn-primary mt-2">立即前往付款</a>
+            {% endif %}
+        </p>
         <!-- 顯示商品明細 -->
         <h3>商品明細：</h3>
         <ul>
@@ -25,7 +37,6 @@
                 <li>{{ item.product.name }} - {{ item.quantity }} x NT${{ item.price }}</li>
             {% endfor %}
         </ul>
-
         <!-- 直接顯示總金額 -->
         <h4>總金額： NT${{ total_cost }}</h4>
     </div>
