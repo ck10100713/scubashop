@@ -18,7 +18,8 @@ urlpatterns = [
     path('complete_profile/', views.complete_profile_view, name='complete_profile'),
     # unfinished
     # path('profile/<int:pk>/', views.profile_views, name='profile'),
-    path('verify_email/', views.verify_email, name='verify_email'),
+    path('verify_email/', views.verify_email_view, name='verify_email'),
+    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('verify_phone/', views.verify_phone, name='verify_phone'),
     # api
 ]

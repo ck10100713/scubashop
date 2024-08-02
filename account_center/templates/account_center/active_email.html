@@ -1,0 +1,9 @@
+<!-- active_email.html -->
+<!DOCTYPE html>
+<html>
+<body>
+    <p>Hi {{ user.username }},</p>
+    <p>Please click on the link below to confirm your registration:</p>
+    <p><a href="{{ domain }}{% url 'account_center:activate' uidb64=uid token=token %}">Activate</a></p>
+</body>
+</html>

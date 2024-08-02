@@ -180,3 +180,16 @@ PAYPAL_TEST = True  # 設為 True 使用沙箱環境，設為 False 使用實際
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET')
 PAYPAL_MODE = 'sandbox'  # 'live' for production
+
+# 限制登入次數
+# ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 10
+# ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
