@@ -19,6 +19,9 @@
    - ACCOUNT_LOGIN_REDIRECT_URL
    ## 運營以及其他
 
+## 部署注意
+   - debug = off
+
 ## 疑問
    - api統一
    - 購物車跟第三方導入next衝突測試
