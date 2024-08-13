@@ -8,7 +8,7 @@ from cart.models import Cart
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from .serializers import OrderSerializer, OrderItemSerializer, OrderSummarySerializer
+from .serializers import OrderSerializer, OrderItemSerializer
 
 @login_required
 def order_check(request):
@@ -86,51 +86,70 @@ def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'orders/history.html', {'orders': orders})
 
-@api_view(['GET'])
-def api_overview(request):
-    api_urls = {
-        'Order List': 'api/orderbooks/',
-        'Order Detail': 'api/orderbooks/<str:pk>/',
-    }
-    return Response(api_urls)
+from rest_framework import viewsets
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import OrderFilter
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
-@permission_classes([permissions.IsAdminUser])
-def orderbooks(request, pk=None):
-    if request.method == 'GET':
-        if pk:
-            order = Order.objects.get(id=pk)
-            serializer = OrderSerializer(order, many=False)
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = OrderFilter
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PATCH', 'DELETE']:
+            self.permission_classes = [permissions.IsAdminUser]
         else:
-            # get all orders which content only user id and order id
-            orders = Order.objects.all()
-            serializer = OrderSummarySerializer(orders, many=True)
-        return Response(serializer.data)
+            self.permission_classes = [permissions.AllowAny]
+        return super().get_permissions()
 
-    elif request.method == 'POST':
-        serializer = OrderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET'])
+# def api_overview(request):
+#     api_urls = {
+#         'Order List': 'api/orderbooks/',
+#         'Order Detail': 'api/orderbooks/<str:pk>/',
+#     }
+#     return Response(api_urls)
 
-    elif request.method == 'PUT':
-        order = Order.objects.get(id=pk)
-        serializer = OrderSerializer(instance=order, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+# @permission_classes([permissions.IsAdminUser])
+# def orderbooks(request, pk=None):
+#     if request.method == 'GET':
+#         if pk:
+#             order = Order.objects.get(id=pk)
+#             serializer = OrderSerializer(order, many=False)
+#         else:
+#             # get all orders which content only user id and order id
+#             orders = Order.objects.all()
+#             serializer = OrderSummarySerializer(orders, many=True)
+#         return Response(serializer.data)
 
-    elif request.method == 'DELETE':
-        order = Order.objects.get(id=pk)
-        order.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+#     elif request.method == 'POST':
+#         serializer = OrderSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'PATCH':
-        order = Order.objects.get(id=pk)
-        serializer = OrderSerializer(instance=order, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method == 'PUT':
+#         order = Order.objects.get(id=pk)
+#         serializer = OrderSerializer(instance=order, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     elif request.method == 'DELETE':
+#         order = Order.objects.get(id=pk)
+#         order.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#     elif request.method == 'PATCH':
+#         order = Order.objects.get(id=pk)
+#         serializer = OrderSerializer(instance=order, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

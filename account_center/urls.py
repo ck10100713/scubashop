@@ -5,6 +5,13 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework.routers import DefaultRouter
+from .views import UserProfileViewSet, DefaultRecipientViewSet
+
+router = DefaultRouter()
+router.register('user_profile', UserProfileViewSet)
+router.register('default_recipient', DefaultRecipientViewSet)
+
 app_name = 'account_center'
 
 urlpatterns = [
@@ -22,4 +29,5 @@ urlpatterns = [
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('verify_phone/', views.verify_phone, name='verify_phone'),
     # api
+    path('api/', include(router.urls)),
 ]

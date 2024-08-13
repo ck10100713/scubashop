@@ -12,8 +12,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'user', 'created_at', 'updated_at', 'paid', 'items']
 
-class OrderSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        # display toptal amount of order
-        fields = ['id', 'name', 'user', 'amount']
+# class OrderSummarySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Order
+#         # display toptal amount of order
+#         fields = ['id', 'name', 'user', 'amount']

@@ -210,3 +210,20 @@ def verify_phone(request):
     user_profile.phone_verified = True
     user_profile.save()
     return redirect('account_center:edit_profile')
+
+
+# api
+
+from rest_framework import viewsets, permissions
+from .models import UserProfile, DefaultRecipient
+from .serializers import UserProfileSerializer, DefaultRecipientSerializer
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]  # 僅允許已驗證的用戶訪問
+
+class DefaultRecipientViewSet(viewsets.ModelViewSet):
+    queryset = DefaultRecipient.objects.all()
+    serializer_class = DefaultRecipientSerializer
+    permission_classes = [permissions.IsAuthenticated]
