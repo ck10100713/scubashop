@@ -10,7 +10,7 @@
    ## 支付類
 
    ## 帳號類
-   - admin管理帳號衝突
+   - admin管理帳號衝突(merge account)
    - 無痕模式無法使用第三方登入
    - Oauth更改密碼問題
    - 使用者名稱是否無法更改
@@ -43,11 +43,12 @@
    ## 支付類
 
    ## 帳號類
-
+   - email認證後才能使用？
    ## 運營以及其他
    - 除錯處理
    - api完善
    - api頁面
+   - requirements.txt
 
 ### 待開發功能
    ## 商品類
@@ -58,6 +59,7 @@
    ## 支付類
    - 支付金流extra function like email notify
    ## 帳號類
+   - 密碼上碼
    - 一開始手機號碼可以隨便輸入，但若是跟已認證的衝突要顯示
    - 臉書Oauth
    - Line Oauth
@@ -85,8 +87,6 @@
    ## 運營以及其他
 
 ## 已修復問題
-   - 0元訂單
    - SOCIALACCOUNT_PROVIDERS settings(後台重複刪除即可)
-   - google github Oauth帳號連結
    - settings sensitive data(用env)
    - paypal html問題(改用SDK)

@@ -9,18 +9,37 @@ from django.shortcuts import get_object_or_404
 from .forms import UserProfileForm, DefaultRecipientForm, CompleteProfileForm
 from django.http import HttpResponseRedirect
 
+# def merge_accounts(email, new_user, auth_provider):
+#     """
+#     合併具有相同電子郵件的不同用戶帳戶。
+#     """
+#     try:
+#         existing_user = User.objects.get(email=email)
+#         if existing_user != new_user:
+#             # 處理合併邏輯，例如將新用戶的數據合併到現有用戶中
+#             # ...
+#             # 提示用戶進行操作，這取決於具體需求
+#             raise ValidationError(_('A user with this email already exists.'))
+#     except User.DoesNotExist:
+#         # 如果不存在現有用戶，則可以直接創建新用戶
+#         new_user.save()
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             cell_phone = form.cleaned_data.get('cell_phone')
-            # email = form.cleaned_data.get('email')
+            # 確認信箱是否已經存在
+            email = form.cleaned_data.get('email')
+            # if User.objects.filter(email=email).exists():
+
+            # merge_accounts(email, user, 'email')
             UserProfile.objects.create(user=user, phone_number=cell_phone, email=user.email)
             DefaultRecipient.objects.create(user=user)
             user.backend = 'django.contrib.auth.backends.ModelBackend'  # 指定默認的身份驗證後端
             login(request, user)
-            return redirect('/')  # 注册成功后重定向到首页或其他页面
+            return redirect('/')  # 注冊成功後重定向到首頁
     else:
         form = RegisterForm()
     return render(request, 'account_center/register.html', {'form': form})
