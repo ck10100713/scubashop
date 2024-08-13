@@ -10,6 +10,5 @@ urlpatterns = [
     path('delete/<int:product_id>/', views.delete_from_cart, name='delete_from_cart'),
     # api
     path('api/', views.api_overview, name='api_overview'),
-    path('api/cart/all', views.cart_list, name='cart_list'),
     path('api/cart/<int:user_id>/', views.list_cart, name='list_cart'),
 ]

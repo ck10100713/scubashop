@@ -36,7 +36,7 @@ def product_detail_views(request, product_id):
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductListSerializer
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAdminUser
 
@@ -68,7 +68,7 @@ def products(request, pk=None):
             serializer = ProductSerializer(product, many=False)
         else:
             product = Product.objects.all()
-            serializer = ProductSerializer(product, many=True)
+            serializer = ProductListSerializer(product, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
