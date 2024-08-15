@@ -8,8 +8,11 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','34ba-118-169-28-173.ngrok-free.app','54.161.138.136']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','767f-180-177-8-38.ngrok-free.app','54.161.138.136']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://767f-180-177-8-38.ngrok-free.app'
+]
 # Application definition
 
 INSTALLED_APPS = [

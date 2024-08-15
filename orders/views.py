@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from .serializers import OrderSerializer, OrderItemSerializer
+from django.views.decorators.cache import never_cache
 
 @login_required
 def order_check(request):
@@ -21,9 +22,14 @@ def order_check(request):
         return redirect('orders:create')
     return render(request, 'orders/check.html', {'cart_items': cart_items, 'total_price': total_price})
 
+@never_cache
 @login_required
 def order_create(request):
     cart_items = Cart.objects.filter(user=request.user)
+    # check empty
+    if not cart_items:
+        messages.warning(request, '您的購物車內沒有商品')
+        return redirect('cart:detail')
     total_price = sum(item.get_total_price() for item in cart_items)
     try:
         default_recipient = DefaultRecipient.objects.get(user=request.user)
@@ -56,7 +62,7 @@ def order_create(request):
                 order=order,
                 product=item.product,
                 price=item.product.price,
-                quantity=item.amount
+                quantity=item.quantity
             )
         # 清空購物車
         cart_items.delete()

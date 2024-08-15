@@ -7,8 +7,16 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+        }
         body {
+            display: flex;
+            flex-direction: column;
             padding-top: 56px;
+        }
+        .content {
+            flex: 1;
         }
     </style>
 </head>
@@ -59,7 +67,7 @@
     </nav>
 
     <!-- Page Content -->
-    <div class="container">
+    <div class="content container">
         {% if messages %}
             <div class="alert alert-warning alert-dismissible fade show mt-3" role="alert">
                 {% for message in messages %}

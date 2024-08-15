@@ -5,19 +5,28 @@
 ## 已知bug
    ## 商品類
    - upload function 選擇圖片問題
+   - 快速點兩次bug
+   - 商品分頁
    ## 訂單類
 
    ## 支付類
 
    ## 帳號類
+   - 亂填已驗證過的email
+   - 不能用的功能不要show
+   - 登入頁面新增註冊
    - admin管理帳號衝突(merge account)
    - 無痕模式無法使用第三方登入
+   - github 無法使用第三方登入
+   - ngrok 無法使用第三方登入
    - Oauth更改密碼問題
    - 使用者名稱是否無法更改
    - google登入可以跳過使用者名稱
    - github要填使用者名稱
    - ACCOUNT_LOGIN_REDIRECT_URL
+   - 瀏覽器紀錄在哪裡
    ## 運營以及其他
+   - 最底部標
 
 ## 部署注意
    - debug = off
@@ -50,7 +59,7 @@
    ## 運營以及其他
    - 除錯處理
    - api完善
-   - api頁面
+   - api頁面 swagger test
 
 ### 待開發功能
    ## 商品類
@@ -71,6 +80,7 @@
    ## 運營以及其他
    - 上aws部署
    - 客製化後台
+   - 多語言
 
 ### 功能測試
    - 完整訂單
@@ -93,3 +103,18 @@
    - SOCIALACCOUNT_PROVIDERS settings(後台重複刪除即可)
    - settings sensitive data(用env)
    - paypal html問題(改用SDK)
+
+## 特點
+   - 權限管理
+   - 金流支付
+   - 訂單管理
+   - 第三方驗證
+   - 手機驗證
+   - jwt信箱驗證
+   - database normalization
+   - 批次上架
+   - 申請https,ssl
+   - api請求次數
+   - depoly
+   - 圖片進s3
+   - 圖片快取cdn

@@ -4,7 +4,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile, DefaultRecipient
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from .forms import UserProfileForm, DefaultRecipientForm, CompleteProfileForm
 from django.http import HttpResponseRedirect
@@ -105,14 +105,33 @@ def edit_profile_view(request):
         profile_form = UserProfileForm(request.POST, instance=user_profile)
         recipient_form = DefaultRecipientForm(request.POST, instance=default_recipient)
         if profile_form.is_valid() and recipient_form.is_valid():
+            # 檢查 email 是否有變更
+            if profile_form.cleaned_data['email'] != user.email:
+                # 更新 auth 用戶的 email
+                user.email = profile_form.cleaned_data['email']
+                user.save()
+                # 更新 UserProfile 的 email_verified 為 False
+                user_profile.email_verified = False
             profile_form.save()
             recipient_form.save()
-            return redirect('account_center:profile')  # 重定向到個人資料頁面
-        if  profile_form.is_valid():
+            return redirect('account_center:profile')
+
+        if profile_form.is_valid():
+            # 檢查 email 是否有變更
+            if profile_form.cleaned_data['email'] != user.email:
+                # 更新 auth 用戶的 email
+                user.email = profile_form.cleaned_data['email']
+                user.save()
+                # 更新 UserProfile 的 email_verified 為 False
+                user_profile.email_verified = False
             profile_form.save()
             return redirect('account_center:profile')
         if recipient_form.is_valid():
             recipient_form.save()
+            return redirect('account_center:profile')
+        else:
+            messages.error(request, '請檢查輸入的資料。')
+            print(profile_form.errors)
             return redirect('account_center:profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
@@ -169,16 +188,17 @@ def verify_email_view(request):
         'uid': uid,
         'token': token,
     })
-
     email = EmailMultiAlternatives(
         subject=mail_subject,
         body=text_message,  # 純文本內容
         from_email=settings.EMAIL_HOST_USER,
         to=[user.email]
     )
-
-    email.send()
-    messages.success(request, '驗證郵件已發送，請檢查您的郵箱。')
+    try:
+        email.send()
+        messages.success(request, '驗證郵件已發送，請檢查您的郵箱。')
+    except Exception as e:
+        messages.error(request, '郵件發送失敗，請稍後再試。')
     return redirect('account_center:profile')
 
 from django.utils.http import urlsafe_base64_decode
