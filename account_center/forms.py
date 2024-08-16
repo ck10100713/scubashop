@@ -16,7 +16,7 @@ class RegisterForm(UserCreationForm):
     cell_phone = forms.CharField(
         label="手機號碼",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        validators=[RegexValidator(regex=r'^\d{10,15}$', message="請輸入有效的手機號碼")]
+        validators=[RegexValidator(regex=r'^09\d{8}$', message='手機號碼格式錯誤')]
     )
     password1 = forms.CharField(
         label="密碼",
@@ -50,6 +50,12 @@ class UserProfileForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user_profile = kwargs.get('instance')
+        if user_profile and user_profile.registration_method != 'local':
+            self.fields['email'].widget.attrs['readonly'] = True
 
 class DefaultRecipientForm(forms.ModelForm):
     class Meta:

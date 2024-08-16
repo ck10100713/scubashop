@@ -3,7 +3,7 @@ from .models import UserProfile, DefaultRecipient
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'phone_number', 'email', 'email_verified', 'phone_verified')
+    list_display = ('user', 'name', 'phone_number', 'email', 'email_verified', 'phone_verified', 'registration_method', 'google_id', 'facebook_id', 'line_id')
 
 class DefaultRecipientAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipient_name', 'recipient_phone_number', 'recipient_address')

@@ -12,19 +12,16 @@
    ## 支付類
 
    ## 帳號類
-   - 亂填已驗證過的email
    - 不能用的功能不要show
-   - 登入頁面新增註冊
+   - 驗證信時效問題
+   - google 第三方驗證每次都需要取得token?
    - admin管理帳號衝突(merge account)
-   - 無痕模式無法使用第三方登入
-   - github 無法使用第三方登入
-   - ngrok 無法使用第三方登入
    - Oauth更改密碼問題
    - 使用者名稱是否無法更改
    - google登入可以跳過使用者名稱
-   - github要填使用者名稱
    - ACCOUNT_LOGIN_REDIRECT_URL
-   - 瀏覽器紀錄在哪裡
+   - Line登入
+   - 臉書登入
    ## 運營以及其他
    - 最底部標
 

@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.line',
-    'allauth.socialaccount.providers.github',
 ]
 
 REST_FRAMEWORK = {
@@ -145,8 +144,6 @@ MESSAGE_TAGS = {
 # 從 .env 檔案中讀取設定
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
-GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
-GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -160,17 +157,6 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         }
     },
-    'github': {
-        'SCOPE': [
-            'read:user',
-            'user:email',
-        ],
-        'APP': {
-            'client_id': GITHUB_CLIENT_ID,
-            'secret': GITHUB_CLIENT_SECRET,
-            'key': ''
-        }
-    }
 }
 
 ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'

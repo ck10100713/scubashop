@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from .forms import UserProfileForm, DefaultRecipientForm, CompleteProfileForm
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+
 
 # def merge_accounts(email, new_user, auth_provider):
 #     """
@@ -24,24 +26,53 @@ from django.http import HttpResponseRedirect
 #         # 如果不存在現有用戶，則可以直接創建新用戶
 #         new_user.save()
 
+# def register_view(request):
+#     if request.method == 'POST':
+#         form = RegisterForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             cell_phone = form.cleaned_data.get('cell_phone')
+#             # 確認信箱是否已經存在
+#             email = form.cleaned_data.get('email')
+#             # if User.objects.filter(email=email).exists():
+
+#             # merge_accounts(email, user, 'email')
+#             UserProfile.objects.create(user=user, phone_number=cell_phone, email=user.email)
+#             DefaultRecipient.objects.create(user=user)
+#             user.backend = 'django.contrib.auth.backends.ModelBackend'  # 指定默認的身份驗證後端
+#             login(request, user)
+#             return redirect('/')  # 注冊成功後重定向到首頁
+#     else:
+#         form = RegisterForm()
+#     return render(request, 'account_center/register.html', {'form': form})
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            cell_phone = form.cleaned_data.get('cell_phone')
-            # 確認信箱是否已經存在
             email = form.cleaned_data.get('email')
-            # if User.objects.filter(email=email).exists():
+            # 檢查是否已經有用戶驗證了此信箱
+            if UserProfile.objects.filter(email=email, email_verified=True).exists():
+                form.add_error('email', '此信箱已被註冊。')
+            else:
+                # 繼續處理註冊
+                user = form.save()
+                cell_phone = form.cleaned_data.get('cell_phone')
 
-            # merge_accounts(email, user, 'email')
-            UserProfile.objects.create(user=user, phone_number=cell_phone, email=user.email)
-            DefaultRecipient.objects.create(user=user)
-            user.backend = 'django.contrib.auth.backends.ModelBackend'  # 指定默認的身份驗證後端
-            login(request, user)
-            return redirect('/')  # 注冊成功後重定向到首頁
+                # 創建 UserProfile 並且同步 email
+                user_profile = UserProfile.objects.create(
+                    user=user,
+                    phone_number=cell_phone,
+                    email=email
+                )
+
+                DefaultRecipient.objects.create(user=user)
+                user.backend = 'django.contrib.auth.backends.ModelBackend'  # 指定默認的身份驗證後端
+                login(request, user)
+                return redirect('/')  # 注冊成功後重定向到首頁
     else:
         form = RegisterForm()
+
     return render(request, 'account_center/register.html', {'form': form})
 
 def login_view(request):
@@ -131,8 +162,8 @@ def edit_profile_view(request):
             return redirect('account_center:profile')
         else:
             messages.error(request, '請檢查輸入的資料。')
-            print(profile_form.errors)
-            return redirect('account_center:profile')
+            # print(profile_form.errors)
+            return redirect('account_center:edit_profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
         recipient_form = DefaultRecipientForm(instance=default_recipient)
@@ -217,6 +248,8 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user_profile.email_verified = True
         user_profile.save()
+        user_profile.user.email = user_profile.email
+        user_profile.user.save()
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
         return render(request, 'account_center/activation_complete.html')
