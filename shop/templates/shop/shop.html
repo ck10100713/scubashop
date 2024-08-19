@@ -10,8 +10,13 @@
             <div class="list-group">
                 <a href="{% url 'shop:shop' %}" class="list-group-item list-group-item-action">全部商品</a>
                 {% for category in categories %}
-                <a href="?category={{ category.id }}" class="list-group-item list-group-item-action{% if category.id == selected_category %} active{% endif %}">{{ category.name }}</a>
+                <a href="?category={{ category.id }}{% if form.brand.value %}&brand={{ form.brand.value }}{% endif %}{% if form.sort_by.value %}&sort_by={{ form.sort_by.value }}{% endif %}" class="list-group-item list-group-item-action{% if category.id == form.category.value %} active{% endif %}">{{ category.name }}</a>
                 {% endfor %}
+                <hr>
+                <form method="get" action="{% url 'shop:shop' %}">
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">篩選</button>
+                </form>
             </div>
         </div>
         <!-- 商品列表 -->
@@ -29,7 +34,7 @@
                         </a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="{% url 'shop:detail' product.pk %}">{{ product.title }}</a>
+                                <a href="{% url 'shop:detail' product.pk %}">{{ product.name }}</a>
                             </h4>
                             <h5>NT${{ product.price }}</h5>
                             <p class="card-text">{{ product.description }}</p>

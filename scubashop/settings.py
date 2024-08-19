@@ -163,9 +163,12 @@ SOCIALACCOUNT_PROVIDERS = {
 ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 
-# that is a right way to redirect user to complete profile after signup.
+# that is a right way to redirect user to complete profile after signup in 3rd oauth.
 # ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
+# ACCOUNT_SIGNUP_REDIRECT_URL = '/shop/'
 # ACCOUNT_LOGIN_REDIRECT_URL = '/shop/'
+# SOCIALACCOUNT_AUTO_SIGNUP = True
+
 
 # payment
 PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'

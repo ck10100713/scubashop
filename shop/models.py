@@ -7,9 +7,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Brand(models.Model):
+    name = models.CharField(max_length=255, unique=True, default='unknown')
+
+    def __str__(self):
+        return self.name
+
 def product_image_upload_to(instance, filename):
     category_name = instance.categories.name
-    brand_name = instance.brand
+    brand_name = instance.brand.name
     product_name = instance.name
     ext = filename.split('.')[-1]
     filename = f'{uuid4().hex}.{ext}'
@@ -22,9 +28,8 @@ class Product(models.Model):
     description = models.TextField()
     size = models.CharField(max_length=50, blank=True, null=True)
     color = models.CharField(max_length=50, blank=True, null=True)
-    brand = models.CharField(max_length=255)
+    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
     image = models.ImageField(upload_to=product_image_upload_to, blank=True, null=True)
-    # image = models.ImageField(upload_to='', blank=True, null=True)
     isActive = models.BooleanField(default=True)
 
     def __str__(self):

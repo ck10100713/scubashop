@@ -7,17 +7,15 @@
    - upload function 選擇圖片問題
    - 快速點兩次bug
    - 商品分頁
+   - 分類bug
    ## 訂單類
 
    ## 支付類
 
    ## 帳號類
+   - 3rd cancel url
    - 不能用的功能不要show
-   - adpater 自動生成username
    - 驗證信時效問題
-   - google 第三方驗證每次都需要取得token?
-   - merge account
-   - ACCOUNT_LOGIN_REDIRECT_URL
    - Line登入
    - 臉書登入
    ## 運營以及其他

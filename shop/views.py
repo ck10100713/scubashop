@@ -2,9 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Product, Category, ProductImage
+from .models import Product, Category, ProductImage, Brand
 from django.contrib.auth.forms import UserCreationForm
-from .forms import ProductForm, CategoryForm
+from .forms import ProductForm, CategoryForm, ProductFilterForm
 from rest_framework.decorators import permission_classes
 from rest_framework import permissions
 
@@ -15,15 +15,45 @@ def index_views(request):
     }
     return render(request, 'index.html', context)
 
+# def shop_views(request):
+#     categories = Category.objects.all()
+#     products = Product.objects.filter(isActive=True)
+#     category_id = request.GET.get('category')
+#     if category_id:
+#         products = products.filter(categories__id=category_id)
+#     context = {
+#         'categories': categories,
+#         'products': products,
+#     }
+#     return render(request, 'shop/shop.html', context)
+
 def shop_views(request):
+    form = ProductFilterForm(request.GET or None)
+    products = Product.objects.all()
+
+    if form.is_valid():
+        category = form.cleaned_data.get('category')
+        brand = form.cleaned_data.get('brand')
+        sort_by = form.cleaned_data.get('sort_by')
+
+        if category:
+            products = products.filter(category=category)
+        if brand:
+            products = products.filter(brand=brand)
+        if sort_by:
+            if sort_by == 'price_asc':
+                products = products.order_by('price')
+            elif sort_by == 'price_desc':
+                products = products.order_by('-price')
+
     categories = Category.objects.all()
-    products = Product.objects.filter(isActive=True)
-    category_id = request.GET.get('category')
-    if category_id:
-        products = products.filter(categories__id=category_id)
+    brands = Brand.objects.all()
+
     context = {
-        'categories': categories,
         'products': products,
+        'categories': categories,
+        'brands': brands,
+        'form': form,
     }
     return render(request, 'shop/shop.html', context)
 

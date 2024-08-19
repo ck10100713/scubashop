@@ -165,18 +165,24 @@ def edit_profile_view(request):
 
 @login_required
 def change_password_view(request):
-    if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)  # 重要！更新用户的会话以防止注销
-            return redirect('account_center:profile')
-        else:
-            # 表单无效，处理错误
-            print(form.errors)
+    user = request.user
+    if user.userprofile.registration_method != 'local':
+        login_provider = user.userprofile.registration_method
+        messages.error(request, '您的帳號是由{}登錄的，無法修改密碼。'.format(login_provider))
+        return redirect('account_center:profile')
     else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'account_center/change_password.html', {'form': form})
+        if request.method == 'POST':
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)  # 重要！更新用户的会话以防止注销
+                return redirect('account_center:profile')
+            else:
+                # 表单无效，处理错误
+                print(form.errors)
+        else:
+            form = PasswordChangeForm(request.user)
+        return render(request, 'account_center/change_password.html', {'form': form})
 
 # forgot password
 from .forms import CustomPasswordResetForm
@@ -199,30 +205,34 @@ def password_reset_view(request):
             associated_users = User.objects.filter(email=email)
             if associated_users.exists():
                 for user in associated_users:
-                    token = default_token_generator.make_token(user)
-                    uid = urlsafe_base64_encode(force_bytes(user.pk))
-                    current_site = get_current_site(request)
+                    if user.userprofile.registration_method != 'local':
+                        messages.error(request, '您的帳號是由{}登錄的，無法重設密碼。'.format(user.userprofile.registration_method))
+                        return redirect('account_center:password_reset')
+                    else:
+                        token = default_token_generator.make_token(user)
+                        uid = urlsafe_base64_encode(force_bytes(user.pk))
+                        current_site = get_current_site(request)
 
-                    email_subject = '重設密碼請求'
-                    text_message = render_to_string('account_center/password_reset_email.txt', {
-                        'user': user,
-                        'domain': current_site.domain,
-                        'uid': uid,
-                        'token': token,
-                        'protocol': 'https' if request.is_secure() else 'http'
-                    })
-                    email_context = EmailMultiAlternatives(
-                        email_subject,
-                        text_message,
-                        settings.EMAIL_HOST_USER,
-                        [user.email]
-                    )
-                    try:
-                        email_context.send()
-                        messages.success(request, '重設密碼郵件已發送，請檢查您的郵箱。')
-                    except Exception as e:
-                        messages.error(request, '郵件發送失敗，請稍後再試。')
-                        print(e)
+                        email_subject = '重設密碼請求'
+                        text_message = render_to_string('account_center/password_reset_email.txt', {
+                            'user': user,
+                            'domain': current_site.domain,
+                            'uid': uid,
+                            'token': token,
+                            'protocol': 'https' if request.is_secure() else 'http'
+                        })
+                        email_context = EmailMultiAlternatives(
+                            email_subject,
+                            text_message,
+                            settings.EMAIL_HOST_USER,
+                            [user.email]
+                        )
+                        try:
+                            email_context.send()
+                            messages.success(request, '重設密碼郵件已發送，請檢查您的郵箱。')
+                        except Exception as e:
+                            messages.error(request, '郵件發送失敗，請稍後再試。')
+                            print(e)
     else:
         form = PasswordResetForm()
 
@@ -232,19 +242,15 @@ from django.contrib.auth.forms import SetPasswordForm
 
 def password_reset_confirm_view(request, uidb64, token):
     User = get_user_model()
-    print(uidb64)
-    print(token)
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    print(user)
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == 'POST':
             form = SetPasswordForm(user, request.POST)
             if form.is_valid():
-                print('form is valid')
                 form.save()
                 messages.success(request, '密碼重設成功，請使用新密碼登入。')
                 return redirect('account_center:password_reset_complete')

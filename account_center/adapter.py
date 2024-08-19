@@ -6,6 +6,11 @@ from allauth.socialaccount.models import SocialAccount
 from .models import UserProfile
 import random
 import string
+from django.urls import reverse
+from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     def save_user(self, request, user, form, commit=True):
@@ -19,7 +24,24 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         return "/shop/index/"
 
+
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+    def pre_social_login(self, request, sociallogin):
+        # 如果用戶已經登入，則不處理
+        if request.user.is_authenticated:
+            return
+
+        # 嘗試根據email查找已存在的本地帳號
+        email = sociallogin.account.extra_data.get('email')
+        if email:
+            try:
+                existing_user = User.objects.get(email=email)
+                # 將這個社交帳號與現有的本地帳號關聯
+                sociallogin.connect(request, existing_user)
+            except User.DoesNotExist:
+                # 如果沒有找到相同email的本地帳號，則允許創建新帳號
+                pass
+
     def save_user(self, request, sociallogin, form=None):
         # 調用父類的 save_user 方法
         user = super().save_user(request, sociallogin, form=form)
@@ -51,12 +73,14 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         return user
 
     def generate_random_username(self, provider):
+        print('generate_random_username')
         """生成一個基於 provider 的隨機用戶名"""
         prefix = provider[0]  # 例如 'g' 對應 Google
         random_suffix = ''.join(random.choices(string.digits, k=8))
         return f"{prefix}user{random_suffix}"
 
     def get_login_redirect_url(self, request):
+        print('get_login_redirect_url')
         path = "/shop/index/"
         return path
 
@@ -64,6 +88,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         自定義填充用戶信息的邏輯，包括自定義 username 生成
         """
+        print('populate_user')
         user = super().populate_user(request, sociallogin, data)
 
         # 如果 `username` 已經被填充，則跳過這一步
@@ -74,3 +99,11 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             user.username = f"{provider_prefix}user{random_suffix}"
 
         return user
+    def get_connect_redirect_url(self, request, socialaccount):
+        # 登錄後重定向到 shop/index/
+        return reverse('shop:index')
+
+    def authentication_error(self, request, provider_id, error=None, exception=None, extra_context=None):
+        # 當出現錯誤時，例如用戶取消了第三方登入，重定向到指定頁面
+        print('authentication_error')
+        return redirect('/shop/index/')
