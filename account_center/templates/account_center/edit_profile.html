@@ -18,8 +18,7 @@
             </div>
             <div class="form-group">
                 <label for="email">Email：</label>
-                <input type="email" id="email" name="email" value="{{ profile_form.email.value }}" class="form-control"
-                    {% if profile_form.email.field.widget.attrs.readonly %} readonly {% endif %}>
+                <input type="text" id="email" name="email" value="{{ profile_form.email.value }}" class="form-control" readonly>
             </div>
             <h3 class="mt-5">預設收件人資料</h3>
             <div class="form-group">

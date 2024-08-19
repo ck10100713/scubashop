@@ -117,6 +117,7 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/account_center/login/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 STATIC_URL = '/static/'
@@ -163,8 +164,8 @@ ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 
 # that is a right way to redirect user to complete profile after signup.
-ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
-ACCOUNT_LOGIN_REDIRECT_URL = '/shop/'
+# ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
+# ACCOUNT_LOGIN_REDIRECT_URL = '/shop/'
 
 # payment
 PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'

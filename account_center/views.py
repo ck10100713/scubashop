@@ -137,24 +137,12 @@ def edit_profile_view(request):
         recipient_form = DefaultRecipientForm(request.POST, instance=default_recipient)
         if profile_form.is_valid() and recipient_form.is_valid():
             # 檢查 email 是否有變更
-            if profile_form.cleaned_data['email'] != user.email:
-                # 更新 auth 用戶的 email
-                user.email = profile_form.cleaned_data['email']
-                user.save()
-                # 更新 UserProfile 的 email_verified 為 False
-                user_profile.email_verified = False
             profile_form.save()
             recipient_form.save()
             return redirect('account_center:profile')
 
         if profile_form.is_valid():
             # 檢查 email 是否有變更
-            if profile_form.cleaned_data['email'] != user.email:
-                # 更新 auth 用戶的 email
-                user.email = profile_form.cleaned_data['email']
-                user.save()
-                # 更新 UserProfile 的 email_verified 為 False
-                user_profile.email_verified = False
             profile_form.save()
             return redirect('account_center:profile')
         if recipient_form.is_valid():
@@ -162,7 +150,6 @@ def edit_profile_view(request):
             return redirect('account_center:profile')
         else:
             messages.error(request, '請檢查輸入的資料。')
-            # print(profile_form.errors)
             return redirect('account_center:edit_profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
@@ -190,6 +177,85 @@ def change_password_view(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'account_center/change_password.html', {'form': form})
+
+# forgot password
+from .forms import CustomPasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import redirect
+from django.contrib.auth.tokens import default_token_generator
+
+def password_reset_view(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            associated_users = User.objects.filter(email=email)
+            if associated_users.exists():
+                for user in associated_users:
+                    token = default_token_generator.make_token(user)
+                    uid = urlsafe_base64_encode(force_bytes(user.pk))
+                    current_site = get_current_site(request)
+
+                    email_subject = '重設密碼請求'
+                    text_message = render_to_string('account_center/password_reset_email.txt', {
+                        'user': user,
+                        'domain': current_site.domain,
+                        'uid': uid,
+                        'token': token,
+                        'protocol': 'https' if request.is_secure() else 'http'
+                    })
+                    email_context = EmailMultiAlternatives(
+                        email_subject,
+                        text_message,
+                        settings.EMAIL_HOST_USER,
+                        [user.email]
+                    )
+                    try:
+                        email_context.send()
+                        messages.success(request, '重設密碼郵件已發送，請檢查您的郵箱。')
+                    except Exception as e:
+                        messages.error(request, '郵件發送失敗，請稍後再試。')
+                        print(e)
+    else:
+        form = PasswordResetForm()
+
+    return render(request, 'account_center/password_reset_form.html', {'form': form})
+
+from django.contrib.auth.forms import SetPasswordForm
+
+def password_reset_confirm_view(request, uidb64, token):
+    User = get_user_model()
+    print(uidb64)
+    print(token)
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    print(user)
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                print('form is valid')
+                form.save()
+                messages.success(request, '密碼重設成功，請使用新密碼登入。')
+                return redirect('account_center:password_reset_complete')
+        else:
+            form = SetPasswordForm(user)
+        return render(request, 'account_center/password_reset_confirm.html', {'form': form, 'uidb64': uidb64, 'token': token})
+    else:
+        return render(request, 'account_center/password_reset_confirm_invalid.html')
+
+def password_reset_complete_view(request):
+    return render(request, 'account_center/password_reset_complete.html')
 
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string

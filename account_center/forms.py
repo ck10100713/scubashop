@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from django.contrib.auth.models import User
 from .models import UserProfile, DefaultRecipient
 from django.core.validators import RegexValidator
@@ -75,3 +75,6 @@ class CompleteProfileForm(forms.ModelForm):
         widgets = {
             'email': forms.EmailInput(attrs={'readonly': 'readonly'})
         }
+# password reset
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(label="電子郵件", max_length=254, widget=forms.EmailInput(attrs={'class': 'form-control'}))
