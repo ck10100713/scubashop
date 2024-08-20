@@ -29,7 +29,13 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
+                <!-- 搜尋欄 -->
+                <form class="form-inline my-2 my-lg-0 ml-auto" method="get" action="{% url 'shop:shop' %}">
+                    <input class="form-control mr-sm-2" type="search" name="search" placeholder="搜尋商品" aria-label="搜尋">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">搜尋</button>
+                </form>
+                <!-- 導航選項 -->
+                <ul class="navbar-nav ml-3">
                     <li class="nav-item">
                         <a class="nav-link" href="/">首頁</a>
                     </li>

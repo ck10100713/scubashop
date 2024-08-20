@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Product, Category, ProductImage, Brand
 from django.contrib.auth.forms import UserCreationForm
 from .forms import ProductForm, CategoryForm, ProductFilterForm
@@ -35,27 +36,39 @@ def shop_views(request):
         category = form.cleaned_data.get('category')
         brand = form.cleaned_data.get('brand')
         sort_by = form.cleaned_data.get('sort_by')
+        search = request.GET.get('search')  # 取得搜尋關鍵字
 
         if category:
-            products = products.filter(category=category)
+            products = products.filter(categories=category)
         if brand:
             products = products.filter(brand=brand)
+        if search:
+            products = products.filter(name__icontains=search)  # 根據商品名稱進行搜尋
         if sort_by:
             if sort_by == 'price_asc':
                 products = products.order_by('price')
             elif sort_by == 'price_desc':
                 products = products.order_by('-price')
 
+    # 默認排序，這裡按 ID 排序
+    products = products.order_by('id')
+
+    # 分頁設置
+    paginator = Paginator(products, 9)  # 每頁顯示9個商品
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     categories = Category.objects.all()
     brands = Brand.objects.all()
 
     context = {
-        'products': products,
+        'page_obj': page_obj,  # 傳遞分頁對象
         'categories': categories,
         'brands': brands,
         'form': form,
     }
     return render(request, 'shop/shop.html', context)
+
 
 def product_detail_views(request, product_id):
     product = get_object_or_404(Product, id=product_id)

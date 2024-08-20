@@ -19,12 +19,21 @@ class ProductForm(forms.ModelForm):
     )
 
 class ProductFilterForm(forms.Form):
-    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
-    brand = forms.ModelChoiceField(queryset=Brand.objects.all(), required=False)
-    sort_by = forms.ChoiceField(choices=[
-        ('price_asc', '價格升序'),
-        ('price_desc', '價格降序'),
-    ], required=False)
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(), required=False, label="分類"
+    )
+    brand = forms.ModelChoiceField(
+        queryset=Brand.objects.all(), required=False, label="品牌"
+    )
+    sort_by = forms.ChoiceField(
+        choices=[
+            ('', '-------------'),  # 這裡加入空選項
+            ('price_asc', '金額：低到高'),
+            ('price_desc', '金額：高到低'),
+        ],
+        required=False,
+        label="排序"
+    )
 
 class CategoryForm(forms.ModelForm):
     class Meta:
