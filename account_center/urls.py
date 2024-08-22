@@ -23,11 +23,10 @@ urlpatterns = [
     path('change_password/', views.change_password_view, name='change_password'),
     # forgot password
     path('password-reset/', views.password_reset_view, name='password_reset'),
-    path('reset/<uidb64>/<token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
+    path('passwordreset/<uidb64>/<token>/', views.password_reset_confirm_view, name='password_reset_confirm'),
     path('reset/done/', views.password_reset_complete_view, name='password_reset_complete'),
-    # path('reset/done/', views.password_reset_complete_view, name='password_reset_complete'),
     # oauth
-    path('complete_profile/', views.complete_profile_view, name='complete_profile'),
+    # path('complete_profile/', views.complete_profile_view, name='complete_profile'),
     path('verify_email/', views.verify_email_view, name='verify_email'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('verify_phone/', views.verify_phone, name='verify_phone'),

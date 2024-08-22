@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.line',
 ]
 
 REST_FRAMEWORK = {
@@ -158,6 +157,28 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         }
     },
+    # 'facebook': {
+    #     'METHOD': 'oauth2',
+    #     'SCOPE': ['email', 'public_profile'],
+    #     'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+    #     'FIELDS': [
+    #         'id',
+    #         'email',
+    #         'name',
+    #         'first_name',
+    #         'last_name',
+    #         'verified',
+    #         'locale',
+    #         'timezone',
+    #         'link',
+    #         'gender',
+    #         'updated_time'
+    #     ],
+    #     'EXCHANGE_TOKEN': True,
+    #     'LOCALE_FUNC': lambda request: 'en_US',
+    #     'VERIFIED_EMAIL': False,
+    #     'VERSION': 'v10.0',
+    # },
 }
 
 ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
@@ -167,7 +188,7 @@ SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 # ACCOUNT_SIGNUP_REDIRECT_URL = '/account_center/complete_profile/'
 # ACCOUNT_SIGNUP_REDIRECT_URL = '/shop/'
 # ACCOUNT_LOGIN_REDIRECT_URL = '/shop/'
-# SOCIALACCOUNT_AUTO_SIGNUP = True
+# SOCIALACCOUNT_AUTO_SIGNUP = False
 
 
 # payment
@@ -190,3 +211,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# verification email
+PASSWORD_RESET_TIMEOUT_HOURS = 24
+EMAIL_VERIFICATION_TIMEOUT_HOURS = 24

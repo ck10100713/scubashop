@@ -1,14 +1,17 @@
-{% extends "socialaccount/base_entrance.html" %}
-{% load i18n %}
-{% load allauth %}
-{% block head_title %}
-    {% trans "Third-Party Login Failure" %}
-{% endblock head_title %}
+{% extends "base.html" %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Third-Party Login Failure" %}
-    {% endelement %}
-    {% element p %}
-        {% trans "An error occurred while attempting to login via your third-party account." %}
-    {% endelement %}
-{% endblock content %}
+<div class="container" style="padding-top: 20px;">
+    <div class="row justify-content-center" style="margin-top: 20px;">
+        <div class="col-md-6">
+            <div class="alert alert-danger" role="alert" style="margin-top: 20px; padding: 20px;">
+                <h4 class="alert-heading">認證錯誤</h4>
+                <p>您嘗試的操作遇到了問題。請檢查您的登錄信息並重試。</p>
+                <hr>
+                <p class="mb-0">如果問題仍然存在，請聯繫我們的支持團隊。</p>
+                <a href="{% url 'account_center:login' %}" class="btn btn-primary mt-3">返回登入頁面</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -113,18 +113,18 @@ def profile_view(request):
         'default_recipient': default_recipient,
     })
 
-@login_required
-def complete_profile_view(request):
-    user = request.user
-    user_profile, created = UserProfile.objects.get_or_create(user=user)
-    if request.method == 'POST':
-        form = CompleteProfileForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('account_center:profile')  # 重定向到用户的个人资料页面
-    else:
-        form = CompleteProfileForm(instance=user)
-    return render(request, 'account_center/complete_profile.html', {'form': form})
+# @login_required
+# def complete_profile_view(request):
+#     user = request.user
+#     user_profile, created = UserProfile.objects.get_or_create(user=user)
+#     if request.method == 'POST':
+#         form = CompleteProfileForm(request.POST, instance=user)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('account_center:profile')  # 重定向到用户的个人资料页面
+#     else:
+#         form = CompleteProfileForm(instance=user)
+#     return render(request, 'account_center/complete_profile.html', {'form': form})
 
 @login_required
 def edit_profile_view(request):
@@ -195,7 +195,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import redirect
-from django.contrib.auth.tokens import default_token_generator
+from .tokens import generate_token, decode_token
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
+from django.core.mail import EmailMultiAlternatives
 
 def password_reset_view(request):
     if request.method == 'POST':
@@ -209,7 +212,14 @@ def password_reset_view(request):
                         messages.error(request, '您的帳號是由{}登錄的，無法重設密碼。'.format(user.userprofile.registration_method))
                         return redirect('account_center:password_reset')
                     else:
-                        token = default_token_generator.make_token(user)
+                        expiry_time = make_aware(datetime.now() + timedelta(days=1))  # 設定驗證連結有效期為 1 天
+                        try:
+                            token = generate_token(user, expiry_time)
+                        except Exception as e:
+                            messages.error(request, '密鑰生成失敗，請稍後再試。')
+                            print(e)
+                            return redirect('account_center:password_reset')
+                        # token = default_token_generator.make_token(user)
                         uid = urlsafe_base64_encode(force_bytes(user.pk))
                         current_site = get_current_site(request)
 
@@ -219,7 +229,8 @@ def password_reset_view(request):
                             'domain': current_site.domain,
                             'uid': uid,
                             'token': token,
-                            'protocol': 'https' if request.is_secure() else 'http'
+                            'protocol': 'https' if request.is_secure() else 'http',
+                            'reset_token_timeout': settings.PASSWORD_RESET_TIMEOUT_HOURS,
                         })
                         email_context = EmailMultiAlternatives(
                             email_subject,
@@ -245,18 +256,31 @@ def password_reset_confirm_view(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        info = decode_token(token)
+    except Exception as e:
+        print(e)
         user = None
-    if user is not None and default_token_generator.check_token(user, token):
-        if request.method == 'POST':
-            form = SetPasswordForm(user, request.POST)
-            if form.is_valid():
-                form.save()
-                messages.success(request, '密碼重設成功，請使用新密碼登入。')
-                return redirect('account_center:password_reset_complete')
+        info = {
+            'user_id': None,
+            'expiry': None
+        }
+        messages.error(request, '驗證連結無效。')
+        return redirect('account_center:password_reset')
+    # if user is not None and default_token_generator.check_token(user, token):
+    if user is not None and user.id == info['user_id']:
+        if info['expiry'] < datetime.now():
+            messages.error(request, '驗證連結已過期，請重新申請。')
+            return redirect('account_center:password_reset')
         else:
-            form = SetPasswordForm(user)
-        return render(request, 'account_center/password_reset_confirm.html', {'form': form, 'uidb64': uidb64, 'token': token})
+            if request.method == 'POST':
+                form = SetPasswordForm(user, request.POST)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, '密碼重設成功，請使用新密碼登入。')
+                    return redirect('account_center:password_reset_complete')
+            else:
+                form = SetPasswordForm(user)
+            return render(request, 'account_center/password_reset_confirm.html', {'form': form, 'uidb64': uidb64, 'token': token})
     else:
         return render(request, 'account_center/password_reset_confirm_invalid.html')
 
@@ -267,13 +291,13 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode # 將二進制數據轉換為 URL 安全的 Base64 編碼
 from django.utils.encoding import force_bytes
-from .tokens import account_activation_token
+# from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.conf import settings
 from django.contrib import messages
 from django.utils.encoding import force_str
 from django.contrib.auth.models import User
-# from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import default_token_generator
 
 @login_required
 def verify_email_view(request):
@@ -282,7 +306,14 @@ def verify_email_view(request):
     # 處理驗證邏輯
     current_site = get_current_site(request)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    token = account_activation_token.make_token(user)
+    expiry_time = make_aware(datetime.now() + timedelta(days=1))  # 設定驗證連結有效期為 1 天
+    try:
+        token = generate_token(user, expiry_time)
+    except Exception as e:
+        messages.error(request, '密鑰生成失敗，請稍後再試。')
+        print(e)
+        return redirect('account_center:profile')
+    # token = account_activation_token.make_token(user)
     mail_subject = 'ScubaShop 會員帳號驗證'
 
     text_message = render_to_string('account_center/active_email.txt', {
@@ -290,6 +321,8 @@ def verify_email_view(request):
         'domain': current_site.domain,
         'uid': uid,
         'token': token,
+        'protocol': 'https' if request.is_secure() else 'http',
+        'email_verification_token_timeout': settings.EMAIL_VERIFICATION_TIMEOUT_HOURS,
     })
     email = EmailMultiAlternatives(
         subject=mail_subject,
@@ -301,6 +334,7 @@ def verify_email_view(request):
         email.send()
         messages.success(request, '驗證郵件已發送，請檢查您的郵箱。')
     except Exception as e:
+        print(e)
         messages.error(request, '郵件發送失敗，請稍後再試。')
     return redirect('account_center:profile')
 
@@ -309,22 +343,32 @@ from django.utils.http import urlsafe_base64_decode
 
 def activate(request, uidb64, token):
     try:
-        # 解碼 UID，這裡的 uid 是 User 的主鍵
         uid = force_str(urlsafe_base64_decode(uidb64))
-        # 查詢 User 實例
         user = User.objects.get(pk=uid)
-        # 查詢對應的 UserProfile
         user_profile = UserProfile.objects.get(user=user)
-    except(TypeError, ValueError, OverflowError, UserProfile.DoesNotExist):
+        info = decode_token(token)
+    except Exception as e:
+        print(e)
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user_profile.email_verified = True
-        user_profile.save()
-        user_profile.user.email = user_profile.email
-        user_profile.user.save()
-        user.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, user)
-        return render(request, 'account_center/activation_complete.html')
+        info = {
+            'user_id': None,
+            'expiry': None
+        }
+        messages.error(request, '驗證連結無效。')
+        return redirect('account_center:profile')
+    # if user is not None and default_token_generator.check_token(user, token):
+    if user is not None and user.id == info['user_id']:
+        if info['expiry'] < datetime.now():
+            messages.error(request, '驗證連結已過期，請重新申請。')
+            return redirect('account_center:profile')
+        else:
+            user_profile.email_verified = True
+            user_profile.save()
+            user_profile.user.email = user_profile.email
+            user_profile.user.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
+            return render(request, 'account_center/activation_complete.html')
     else:
         return render(request, 'account_center/activation_invalid.html')
 
@@ -336,9 +380,7 @@ def verify_phone(request):
     user_profile.save()
     return redirect('account_center:edit_profile')
 
-
 # api
-
 from rest_framework import viewsets, permissions
 from .models import UserProfile, DefaultRecipient
 from .serializers import UserProfileSerializer, DefaultRecipientSerializer

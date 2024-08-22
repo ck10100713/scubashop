@@ -1,7 +1,18 @@
-Hi {{ user.username }},
+親愛的 {{ user.username }}，
 
-Please click on the link below to confirm your registration:
+感謝您註冊我們的網站！為了完成註冊過程，請點擊以下連結來驗證您的電子郵件地址：
 
-{{ domain }}/account_center/activate/{{ uid }}/{{ token }}/
+{% if protocol == 'https' %}
+[點擊這裡驗證您的電子郵件](https://{{ domain }}/account_center/activate/{{ uid }}/{{ token }}/)
+{% else %}
+[點擊這裡驗證您的電子郵件](http://{{ domain }}/account_center/activate/{{ uid }}/{{ token }}/)
+{% endif %}
 
-Thank you!
+此連結的有效期限為 {{ email_verification_token_timeout }} 小時。
+
+如果您沒有註冊我們的網站，請忽略這封郵件。
+
+祝您有美好的一天！
+
+最好的祝福，
+企鵝潛水俱樂部
