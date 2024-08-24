@@ -119,14 +119,33 @@ LOGIN_URL = '/account_center/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# STATIC_URL = '/static/'
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# STATIC_ROOT = '/home/ubuntu/scubashop/staticfiles'
+
+
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR,'static'),
+#     os.path.join(BASE_DIR,'media'),
+# ]
+
+# settings.py
+
+STATIC_URL = '/static/'
+
+# 設置靜態文件的收集目錄
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# 設置靜態文件的額外目錄
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static'),
-    os.path.join(BASE_DIR,'media'),
+    os.path.join(BASE_DIR, 'static'),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # settings.py
 # APPEND_SLASH = False
