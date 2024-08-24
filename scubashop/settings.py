@@ -8,7 +8,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ec2-54-85-3-197.compute-1.amazonaws.com','54.161.138.136','penguindiving.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ec2-100-27-173-161.compute-1.amazonaws.com', 'penguindiving.com']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://767f-180-177-8-38.ngrok-free.app'
