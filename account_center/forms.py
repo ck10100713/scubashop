@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from django.contrib.auth.models import User
 from .models import UserProfile, DefaultRecipient
 from django.core.validators import RegexValidator
+import re
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(
@@ -50,12 +51,32 @@ class UserProfileForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+        # 設置空白欄位為選填
+        fields_optional = ['phone_number']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         user_profile = kwargs.get('instance')
         if user_profile and user_profile.registration_method != 'local':
             self.fields['email'].widget.attrs['readonly'] = True
+
+        # 設置 phone_number 為選填
+        if 'phone_number' in self.fields:
+            self.fields['phone_number'].required = False
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number and not re.match(r'^09\d{8}$', phone_number):
+            raise forms.ValidationError('電話號碼必須是以 09 開頭，並且有 10 位數字。')
+        return phone_number
+
+    def save(self, commit=True):
+        user_profile = super().save(commit=False)
+        if user_profile.phone_number and user_profile.phone_number != self.instance.phone_number:
+            user_profile.phone_verified = False
+        if commit:
+            user_profile.save()
+        return user_profile
 
 class DefaultRecipientForm(forms.ModelForm):
     class Meta:
@@ -66,6 +87,20 @@ class DefaultRecipientForm(forms.ModelForm):
             'recipient_phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'recipient_address': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 設置 recipient_name 和 recipient_address 為選填
+        for field in ['recipient_name', 'recipient_phone_number', 'recipient_address']:
+            if field in self.fields:
+                self.fields[field].required = False
+
+    def clean_recipient_phone_number(self):
+        phone_number = self.cleaned_data.get('recipient_phone_number')
+        if phone_number and not re.match(r'^09\d{8}$', phone_number):
+            raise forms.ValidationError('電話號碼必須是以 09 開頭，並且有 10 位數字。')
+        return phone_number
+
 
 # for oauth
 class CompleteProfileForm(forms.ModelForm):

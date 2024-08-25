@@ -133,24 +133,47 @@ def edit_profile_view(request):
     default_recipient, created = DefaultRecipient.objects.get_or_create(user=user)
 
     if request.method == 'POST':
+        # 先保存當前的舊手機號碼
+        old_phone_number = UserProfile.objects.get(user=user).phone_number
+
+        # 初始化表單
         profile_form = UserProfileForm(request.POST, instance=user_profile)
         recipient_form = DefaultRecipientForm(request.POST, instance=default_recipient)
         if profile_form.is_valid() and recipient_form.is_valid():
-            # 檢查 email 是否有變更
+            # 保存表單數據到 user_profile
             profile_form.save()
             recipient_form.save()
+            # 獲取清理過的新手機號碼
+            new_phone_number = profile_form.cleaned_data.get('phone_number')
+            # 比對新的手機號碼是否與舊的不同
+            if old_phone_number != new_phone_number:
+                user_profile.phone_verified = False
+                user_profile.save()
             return redirect('account_center:profile')
 
-        if profile_form.is_valid():
-            # 檢查 email 是否有變更
-            profile_form.save()
-            return redirect('account_center:profile')
-        if recipient_form.is_valid():
+        # 檢查表單是否有錯誤，並顯示對應的錯誤訊息
+        elif recipient_form.is_valid():
+            for errors in profile_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'基本資料出現錯誤 - {error}')
             recipient_form.save()
-            return redirect('account_center:profile')
-        else:
-            messages.error(request, '請檢查輸入的資料。')
             return redirect('account_center:edit_profile')
+
+        elif profile_form.is_valid():
+            for errors in recipient_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'收件人資料出現錯誤 - {error}')
+            profile_form.save()
+            return redirect('account_center:edit_profile')
+
+        else:
+            for errors in profile_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'基本資料出現錯誤 - {error}')
+            for errors in recipient_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'收件人資料出現錯誤 - {error}')
+        return redirect('account_center:edit_profile')
     else:
         profile_form = UserProfileForm(instance=user_profile)
         recipient_form = DefaultRecipientForm(instance=default_recipient)
@@ -376,6 +399,12 @@ import random
 def verify_phone(request):
     user = request.user
     user_profile = UserProfile.objects.get(user=user)
+    if user_profile.phone_verified:
+        messages.error(request, '手機已驗證。')
+        return redirect('account_center:profile')
+    if not user_profile.phone_number:
+        messages.error(request, '請先填寫手機號碼。')
+        return redirect('account_center:profile')
     phone_number = user_profile.phone_number
     # transform phone_number to E.164 format
     phone_number = '+886' + phone_number[1:]
