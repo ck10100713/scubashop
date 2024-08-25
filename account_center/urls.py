@@ -30,6 +30,7 @@ urlpatterns = [
     path('verify_email/', views.verify_email_view, name='verify_email'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('verify_phone/', views.verify_phone, name='verify_phone'),
+    path('input_verification_code/', views.input_verification_code, name='input_verification_code'),
     # policy
     path('privacy_policy/', views.privacy_policy_view, name='privacy_policy'),
     path('data_deletion/', views.data_deletion_view, name='delete_account'),

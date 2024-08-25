@@ -163,6 +163,8 @@ MESSAGE_TAGS = {
 # 從 .env 檔案中讀取設定
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+FACEBOOK_CLIENT_ID = os.getenv('FACEBOOK_CLIENT_ID')
+FACEBOOK_CLIENT_SECRET = os.getenv('FACEBOOK_CLIENT_SECRET')
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -176,28 +178,25 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         }
     },
-    # 'facebook': {
-    #     'METHOD': 'oauth2',
-    #     'SCOPE': ['email', 'public_profile'],
-    #     'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-    #     'FIELDS': [
-    #         'id',
-    #         'email',
-    #         'name',
-    #         'first_name',
-    #         'last_name',
-    #         'verified',
-    #         'locale',
-    #         'timezone',
-    #         'link',
-    #         'gender',
-    #         'updated_time'
-    #     ],
-    #     'EXCHANGE_TOKEN': True,
-    #     'LOCALE_FUNC': lambda request: 'en_US',
-    #     'VERIFIED_EMAIL': False,
-    #     'VERSION': 'v10.0',
-    # },
+    'facebook': {
+        'APP': {
+            'client_id': FACEBOOK_CLIENT_ID,
+            'secret': FACEBOOK_CLIENT_SECRET,
+        },
+        'SCOPE': [
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'auth_type': 'reauthenticate',
+        },
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+    },
 }
 
 ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'

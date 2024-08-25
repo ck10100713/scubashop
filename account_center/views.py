@@ -315,7 +315,6 @@ def verify_email_view(request):
         return redirect('account_center:profile')
     # token = account_activation_token.make_token(user)
     mail_subject = 'ScubaShop 會員帳號驗證'
-
     text_message = render_to_string('account_center/active_email.txt', {
         'user': user,
         'domain': current_site.domain,
@@ -339,7 +338,6 @@ def verify_email_view(request):
     return redirect('account_center:profile')
 
 from django.utils.http import urlsafe_base64_decode
-# from django.utils.encoding import force_text
 
 def activate(request, uidb64, token):
     try:
@@ -356,7 +354,6 @@ def activate(request, uidb64, token):
         }
         messages.error(request, '驗證連結無效。')
         return redirect('account_center:profile')
-    # if user is not None and default_token_generator.check_token(user, token):
     if user is not None and user.id == info['user_id']:
         if info['expiry'] < datetime.now():
             messages.error(request, '驗證連結已過期，請重新申請。')
@@ -372,13 +369,47 @@ def activate(request, uidb64, token):
     else:
         return render(request, 'account_center/activation_invalid.html')
 
+import boto3
+import random
+
 @login_required
 def verify_phone(request):
-    user_profile = request.user.userprofile
-    # 處理驗證邏輯
-    user_profile.phone_verified = True
-    user_profile.save()
-    return redirect('account_center:edit_profile')
+    user = request.user
+    user_profile = UserProfile.objects.get(user=user)
+    phone_number = user_profile.phone_number
+    # transform phone_number to E.164 format
+    phone_number = '+886' + phone_number[1:]
+    # 生成6位數驗證碼
+    verification_code = str(random.randint(100000, 999999))
+    request.session['phone_number'] = phone_number
+    request.session['verification_code'] = verification_code
+    sns_client = boto3.client('sns', region_name='us-east-1')
+    # 發送簡訊
+    try:
+        sns_client.publish(
+            PhoneNumber=phone_number,
+            Message=f"[Scubshop] 您的驗證碼為 {verification_code}（請於十分鐘內驗證）"
+        )
+        messages.success(request, '驗證碼已發送至您的手機，請查收。')
+        return redirect('account_center:input_verification_code')
+    except Exception as e:
+        print(e)
+        messages.error(request, '簡訊發送失敗，請稍後再試。')
+        return redirect('account_center:profile')
+
+def input_verification_code(request):
+    if request.method == 'POST':
+        verification_code = request.POST.get('verification_code')
+        if verification_code == request.session.get('verification_code'):
+            user = request.user
+            user_profile = UserProfile.objects.get(user=user)
+            user_profile.phone_verified = True
+            user_profile.save()
+            messages.success(request, '手機驗證成功。')
+            return redirect('account_center:profile')
+        else:
+            messages.error(request, '驗證碼錯誤，請重新輸入。')
+    return render(request, 'account_center/input_verification_code.html')
 
 # privacy-policy
 def privacy_policy_view(request):
