@@ -53,8 +53,6 @@ urlpatterns = [
     # path('api/', include('orders.urls')),
     # oauth
     path('accounts/', include('allauth.urls')),
-    # paypal payments
-    # path('paypal/', include('paypal.standard.ipn.urls')),
     # Swagger UI
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # ReDoc UI (optional)

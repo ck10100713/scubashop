@@ -380,6 +380,13 @@ def verify_phone(request):
     user_profile.save()
     return redirect('account_center:edit_profile')
 
+# privacy-policy
+def privacy_policy_view(request):
+    return render(request, 'account_center/privacy_policy.html')
+
+def data_deletion_view(request):
+    return render(request, 'account_center/data_deletion.html')
+
 # api
 from rest_framework import viewsets, permissions
 from .models import UserProfile, DefaultRecipient
