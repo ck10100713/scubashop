@@ -243,7 +243,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/path/to/django-error.log',
+            'filename': '/var/log/scubashop/django-error.log',
         },
     },
     'loggers': {
