@@ -361,6 +361,7 @@ def verify_email_view(request):
     return redirect('account_center:profile')
 
 from django.utils.http import urlsafe_base64_decode
+from django.utils import timezone
 
 def activate(request, uidb64, token):
     try:
@@ -378,7 +379,7 @@ def activate(request, uidb64, token):
         messages.error(request, '驗證連結無效。')
         return redirect('account_center:profile')
     if user is not None and user.id == info['user_id']:
-        if info['expiry'] < datetime.now():
+        if info['expiry'] < timezone.now():
             messages.error(request, '驗證連結已過期，請重新申請。')
             return redirect('account_center:profile')
         else:
