@@ -19,4 +19,4 @@ def decode_token(encoded_token):
     token_data = base64.urlsafe_b64decode(encoded_token).decode('utf-8')  # Decode bytes to str
     data = json.loads(token_data)
     data['info']['expiry'] = isoparse(data['info']['expiry'])
-    return data
+    return data['info']

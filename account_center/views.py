@@ -404,7 +404,7 @@ def verify_phone(request):
         return redirect('account_center:profile')
     if not user_profile.phone_number:
         messages.error(request, '請先填寫手機號碼。')
-        return redirect('account_center:profile')
+        return redirect('account_center:edit_profile')
     phone_number = user_profile.phone_number
     # transform phone_number to E.164 format
     phone_number = '+886' + phone_number[1:]
