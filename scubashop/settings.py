@@ -234,3 +234,23 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # verification email
 PASSWORD_RESET_TIMEOUT_HOURS = 24
 EMAIL_VERIFICATION_TIMEOUT_HOURS = 24
+
+# log
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '/path/to/django-error.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
