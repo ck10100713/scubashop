@@ -5,7 +5,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     email_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
     google_id = models.CharField(max_length=100, blank=True, null=True, unique=True)

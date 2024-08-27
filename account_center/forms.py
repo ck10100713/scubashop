@@ -113,3 +113,20 @@ class CompleteProfileForm(forms.ModelForm):
 # password reset
 class CustomPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(label="電子郵件", max_length=254, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
+from django import forms
+
+class ContactForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        label='姓名',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    email = forms.EmailField(
+        label='電子郵件',
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    message = forms.CharField(
+        label='訊息內容',
+        widget=forms.Textarea(attrs={'class': 'form-control'})
+    )

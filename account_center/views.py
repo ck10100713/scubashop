@@ -450,6 +450,51 @@ def privacy_policy_view(request):
 def data_deletion_view(request):
     return render(request, 'account_center/data_deletion.html')
 
+from .forms import ContactForm
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            for_shop = {
+                'subject': f'來自{name}的聯絡我們訊息',
+                'message': message,
+                'email' : settings.EMAIL_HOST_USER,
+            }
+            for_client = {
+                'subject': 'ScubaShop 客服回覆',
+                'message': f'親愛的{name}您好，感謝您的來信，我們已經收到您的訊息，我們將會盡快回覆您，謝謝！',
+                'email': email,
+            }
+            # 發送郵件
+            try:
+                for_shop_email = EmailMultiAlternatives(
+                    subject=for_shop['subject'],
+                    body=for_shop['message'],
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[for_shop['email']],
+                )
+                for_shop_email.send()
+                for_client_email = EmailMultiAlternatives(
+                    subject=for_client['subject'],
+                    body=for_client['message'],
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[for_client['email']]
+                )
+                for_client_email.send()
+                messages.success(request, '您的訊息已成功發送！')
+                return redirect('account_center:contact')
+            except Exception as e:
+                print(e)
+                messages.error(request, '郵件發送失敗，請稍後再試。')
+                return redirect('account_center:contact')
+    else:
+        form = ContactForm()
+    return render(request, 'account_center/contact.html', {'form': form})
+
+
 # api
 from rest_framework import viewsets, permissions
 from .models import UserProfile, DefaultRecipient

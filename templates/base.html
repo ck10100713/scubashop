@@ -67,6 +67,9 @@
                             <a class="nav-link" href="{% url 'account_center:register' %}">註冊</a>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_center:contact' %}">聯絡我們</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -84,7 +87,6 @@
                 </button>
             </div>
         {% endif %}
-        
         {% block content %}
         {% endblock %}
     </div>
