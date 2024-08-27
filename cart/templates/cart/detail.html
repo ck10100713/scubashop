@@ -1,5 +1,6 @@
 <!-- cart_detail.html -->
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     您的購物車
@@ -26,7 +27,13 @@
                             <td class="col-sm-8 col-md-6">
                                 <div class="media">
                                     <a class="thumbnail pull-left" href="{{ item.product.get_absolute_url }}">
-                                        <img class="media-object" src="{{ item.product.image.url }}" style="width: 72px; height: 72px;">
+                                        {% if item.product.images.all %}
+                                            {% with item.product.images.first as first_image %}
+                                                <img class="media-object" src="{{ first_image.image.url }}" style="width: 72px; height: 72px;">
+                                            {% endwith %}
+                                        {% else %}
+                                            <img class="media-object" src="{% static 'img/no_image.png' %}" style="width: 72px; height: 72px;">
+                                        {% endif %}
                                     </a>
                                     <div class="media-body">
                                         <h4 class="media-heading">
