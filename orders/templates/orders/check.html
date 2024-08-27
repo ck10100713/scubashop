@@ -1,21 +1,33 @@
+<!-- orders_check.html -->
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}確認商品明細{% endblock %}
+
 {% block content %}
 <h2>確認商品明細</h2>
-<table>
-    <tr>
-        <th>商品</th>
-        <th>數量</th>
-        <th>價格</th>
-        <th>總價</th>
-    </tr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>商品</th>
+            <th>數量</th>
+            <th>價格</th>
+            <th>總價</th>
+        </tr>
+    </thead>
     <tbody>
         {% for item in cart_items %}
             <tr>
                 <td class="col-sm-8 col-md-6">
                     <div class="media">
                         <a class="thumbnail pull-left" href="{{ item.product.get_absolute_url }}">
-                            <img class="media-object" src="{{ item.product.image.url }}" style="width: 72px; height: 72px;">
+                            {% if item.product.images.all %}
+                                {% with item.product.images.first as first_image %}
+                                    <img class="media-object" src="{{ first_image.image.url }}" style="width: 72px; height: 72px;">
+                                {% endwith %}
+                            {% else %}
+                                <img class="media-object" src="{% static 'path/to/default-image.jpg' %}" style="width: 72px; height: 72px;">
+                            {% endif %}
                         </a>
                         <div class="media-body">
                             <h4 class="media-heading">
