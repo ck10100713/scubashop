@@ -49,10 +49,13 @@ urlpatterns = [
     path('index/', views.index_views, name='index'),
     path('', views.shop_views, name='shop'),
     path('product/<int:product_id>/', views.product_detail_views, name='detail'),
+    # check picture
+    path('product/<int:product_id>/pictures/', views.picture_views, name='product_pictures'),
     # API 路由
     # path('api/', api_overview, name='api-overview'),
     path('api/', include(router.urls)),  # 使用 DefaultRouter 生成的 API 路由
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 # 如果有靜態文件，添加 static() 函數
 if settings.DEBUG:

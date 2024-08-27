@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Pictures</title>
+</head>
+<body>
+    <h1>{{ product.name }}</h1>
+    <div>
+        {% if images %}
+            {% for image in images %}
+                <img src="{{ image.image.url }}" alt="{{ product.name }} image" style="max-width: 100%; height: auto;">
+            {% endfor %}
+        {% else %}
+            <p>No images available123 for this product.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

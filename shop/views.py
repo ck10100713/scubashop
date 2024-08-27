@@ -69,6 +69,21 @@ def shop_views(request):
     }
     return render(request, 'shop/shop.html', context)
 
+from django.contrib import messages
+def picture_views(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    images = product.images.all()
+    # images = ProductImage.objects.filter(product=product)
+    if images.count() == 0:
+        msg = 'No image found.'
+    else:
+        msg = images[0].image.url
+    messages.success(request, msg)
+    context = {
+        'product': product,
+        'images': images
+    }
+    return render(request, 'shop/picture.html', context)
 
 def product_detail_views(request, product_id):
     product = get_object_or_404(Product, id=product_id)

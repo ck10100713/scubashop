@@ -281,7 +281,6 @@ def password_reset_confirm_view(request, uidb64, token):
         user = User.objects.get(pk=uid)
         info = decode_token(token)
     except Exception as e:
-        print(e)
         user = None
         info = {
             'user_id': None,
@@ -413,7 +412,10 @@ def verify_phone(request):
     verification_code = str(random.randint(100000, 999999))
     request.session['phone_number'] = phone_number
     request.session['verification_code'] = verification_code
-    sns_client = boto3.client('sns', region_name='us-east-1')
+    sns_client = boto3.client('sns',aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                                    region_name=settings.AWS_DEFAULT_REGION
+                                    )
     # 發送簡訊
     try:
         sns_client.publish(

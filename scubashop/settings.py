@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost','ec2-100-27-173-161.compute-1.amazonaws.com', 'penguindiving.com']
 
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'storages',
 ]
 
 REST_FRAMEWORK = {
@@ -120,32 +121,7 @@ LOGIN_URL = '/account_center/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# STATIC_URL = '/static/'
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-# STATIC_ROOT = '/home/ubuntu/scubashop/staticfiles'
-
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR,'static'),
-#     os.path.join(BASE_DIR,'media'),
-# ]
-
-# settings.py
-
-STATIC_URL = '/static/'
-
-# 設置靜態文件的收集目錄
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# 設置靜態文件的額外目錄
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # settings.py
@@ -254,3 +230,30 @@ LOGGING = {
         },
     },
 }
+
+# aws boto3 sns service
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# storages
+# STATIC_URL = '/static/'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+# 設置靜態文件的收集目錄
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = '/home/ubuntu/scubashop/staticfiles'
+
+# 設置靜態文件的額外目錄
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+# 配置媒體文件
+# MEDIA_URL = '/media/'
+# 在使用 S3 存儲媒體文件時，通常不需要設置 MEDIA_ROOT
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
