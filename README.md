@@ -20,13 +20,9 @@ ScubaShop 是一個用於購買潛水裝備的電子商務網站，支持商品�
 
 點擊商品卡片可以進入商品詳情頁面，顯示商品的詳細信息，包括價格、規格、描述以及更多圖片。
 
-![商品詳情](docs/images/product_detail.png)
-
 ### 4. 搜尋功能
 
 用戶可以通過搜尋框快速找到所需商品。搜尋結果會根據關鍵字顯示相關商品。
-
-![搜尋功能](docs/images/search_function.png)
 
 ### 5. 購物車功能
 
@@ -38,27 +34,54 @@ ScubaShop 是一個用於購買潛水裝備的電子商務網站，支持商品�
 
 支持用戶註冊、登入、以及社交媒體第三方登入。
 
+![註冊與登入](docs/images/login.png)
+
+![註冊與登入](docs/images/register.png)
+
 ![註冊與登入](docs/images/authentication.png)
 
 ### 7. 驗證功能
 
+非第三方登入帳號可以進行email驗證
+
+![email驗證](docs/images/emailverification.png)
+
+![email驗證](docs/images/emailverification2.png)
+
+手機驗證otp驗證使用aws sns服務，目前為沙盒模式只能發送至我的手機號碼，申請生產模式審核中
+
 ### 8. 串接支付
 
+使用paypal處理金流支付
 
+![串接支付](docs/images/paypal.png)
 
-## 貢獻
+![串接支付](docs/images/paypal_login.png)
 
-如果您希望參與貢獻，請參閱 [CONTRIBUTING.md](CONTRIBUTING.md) 文件。
+![串接支付](docs/images/paypal_payment.png)
 
-## 授權
+![串接支付](docs/images/paypal_done.png)
 
-本項目遵循 [MIT 授權](LICENSE)。
+## 使用的技術
 
+ScubaShop 使用了以下技術和服務來實現其功能：
 
-測試email
-scubawebtest@gmail.com
-minhax-1Nefko-murcav
+- **Python**: 用於後端開發。
+- **Django**: 作為主要的 web 框架，用於處理網站的邏輯和數據。
+- **AWS EC2**: 用於網站的部署和托管。
+- **AWS S3**: 用於儲存和管理靜態文件和媒體文件。
+- **PayPal**: 用於處理金流和支付。
+- **Swagger**: 用於 API 文檔的生成和管理，方便開發和測試 API。
+- **HTTPS**: 用於網站的安全加密，確保數據傳輸的安全。
 
-測試paypal 付款帳號
-ScubaShop_Paypal_Test@personal.example.com
-paypaltest
+## 測試帳號
+
+### Email 測試帳號
+
+- **帳號**: scubawebtest@gmail.com
+- **密碼**: minhax-1Nefko-murcav
+
+### PayPal支付 測試帳號
+
+- **帳號**: ScubaShop_Paypal_Test@personal.example.com
+- **密碼**: paypaltest
