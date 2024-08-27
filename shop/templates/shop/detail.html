@@ -1,14 +1,23 @@
-<!-- detail.html -->
 {% extends "base.html" %}
 
-{% block title %}{{ product.title }}{% endblock %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row">
+        <!-- 商品圖片 -->
         <div class="col-md-6">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+            {% if product.images.all %}
+                {% for image in product.images.all %}
+                    <img src="{{ image.image.url }}" alt="{{ product.name }} image" class="img-fluid" style="max-width: 100%; height: auto;">
+                {% endfor %}
+            {% else %}
+                <img src="{% static 'img/no_image.png' %}" alt="no image" class="img-fluid" style="max-width: 100%; height: auto;">
+            {% endif %}
         </div>
+        <!-- 商品資訊 -->
         <div class="col-md-6">
             <h2>{{ product.name }}</h2>
             <h4>價格: NT${{ product.price }}</h4>

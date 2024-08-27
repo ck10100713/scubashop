@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}首頁{% endblock %}
 
 {% block content %}
@@ -14,7 +16,15 @@
             {% for product in products %}
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100">
-                    <a href="{% url 'shop:detail' product.pk %}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}"></a>
+                    <a href="{% url 'shop:detail' product.pk %}">
+                        {% if product.images.all %}
+                            {% with product.images.all|first as first_image %}
+                                <img class="card-img-top" src="{{ first_image.image.url }}" alt="{{ product.name }}">
+                            {% endwith %}
+                        {% else %}
+                            <img class="card-img-top" src="{% static 'img/no_image.png' %}" alt="no image">
+                        {% endif %}
+                    </a>
                     <div class="card-body">
                         <h4 class="card-title">
                             <a href="{% url 'shop:detail' product.pk %}">{{ product.title }}</a>
@@ -31,4 +41,3 @@
         </div>
     </div>
 {% endblock %}
-

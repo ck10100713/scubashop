@@ -54,9 +54,4 @@ urlpatterns = [
     # API 路由
     # path('api/', api_overview, name='api-overview'),
     path('api/', include(router.urls)),  # 使用 DefaultRouter 生成的 API 路由
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-# 如果有靜態文件，添加 static() 函數
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

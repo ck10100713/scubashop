@@ -36,7 +36,7 @@ def shop_views(request):
         category = form.cleaned_data.get('category')
         brand = form.cleaned_data.get('brand')
         sort_by = form.cleaned_data.get('sort_by')
-        search = request.GET.get('search')  # 取得搜尋關鍵字
+        search = request.GET.get('search', '') # 取得搜尋關鍵字，若無則為空字串
 
         if category:
             products = products.filter(categories=category)

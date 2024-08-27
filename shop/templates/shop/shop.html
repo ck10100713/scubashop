@@ -42,8 +42,10 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card h-100">
                         <a href="{% url 'shop:detail' product.pk %}">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                            {% if product.images.all %}
+                                {% with product.images.first as first_image %}
+                                    <img src="{{ first_image.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                                {% endwith %}
                             {% else %}
                                 <img src="static/img/no_image.png" alt="no image" class="img-fluid">
                             {% endif %}
