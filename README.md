@@ -58,3 +58,7 @@ ScubaShop 是一個用於購買潛水裝備的電子商務網站，支持商品�
 測試email
 scubawebtest@gmail.com
 minhax-1Nefko-murcav
+
+測試paypal 付款帳號
+ScubaShop_Paypal_Test@personal.example.com
+paypaltest
