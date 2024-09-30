@@ -46,12 +46,12 @@ router = DefaultRouter()
 router.register('product', views.ProductViewSet)
 
 urlpatterns = [
-    path('index/', views.index_views, name='index'),
-    path('', views.shop_views, name='shop'),
-    path('product/<int:product_id>/', views.product_detail_views, name='detail'),
-    # check picture
-    path('product/<int:product_id>/pictures/', views.picture_views, name='product_pictures'),
-    # API 路由
-    # path('api/', api_overview, name='api-overview'),
-    path('api/', include(router.urls)),  # 使用 DefaultRouter 生成的 API 路由
+    # path('index/', views.index_views, name='index'),
+    # path('', views.shop_views, name='shop'),
+    # path('product/<int:product_id>/', views.product_detail_views, name='detail'),
+    # # check picture
+    # path('product/<int:product_id>/pictures/', views.picture_views, name='product_pictures'),
+    # # API 路由
+    # # path('api/', api_overview, name='api-overview'),
+    # path('api/', include(router.urls)),  # 使用 DefaultRouter 生成的 API 路由
 ]
