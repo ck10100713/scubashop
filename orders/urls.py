@@ -1,23 +1,14 @@
-# order/urls.py
-from django.urls import path
-from . import views
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from django.urls import include
-
+from .views import OrderViewSet, OrderCheckView, OrderCreateView, OrderDetailView, OrderHistoryView
 
 router = DefaultRouter()
-router.register('orders', views.OrderViewSet)
-
-app_name = 'orders'
+router.register(r'orders', OrderViewSet)
 
 urlpatterns = [
-    path('check/', views.order_check, name='check'),
-    path('create/', views.order_create, name='create'),
-    path('detail/<int:order_id>/', views.order_detail, name='detail'),
-    path('history/', views.order_history, name='history'),
-    # api
-    path('api/', include(router.urls)),  # 使用 DefaultRouter 生成的 API 路由
-    # path('api/', views.api_overview, name='order_api'),
-    # path('api/orderbooks', views.orderbooks, name='order'),
-    # path('api/orderbooks/<str:pk>/', views.orderbooks, name='order-detail'),
+    path('', include(router.urls)),
+    path('order-check/', OrderCheckView.as_view(), name='order_check'),
+    path('order-create/', OrderCreateView.as_view(), name='order_create'),
+    path('order-detail/<int:order_id>/', OrderDetailView.as_view(), name='order_detail'),
+    path('order-history/', OrderHistoryView.as_view(), name='order_history'),
 ]

@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 根據環境變數加載不同的 .env 文件
-DJANGO_ENV = os.getenv('DJANGO_ENV', 'local')
-# DJANGO_ENV = 'test'
+# DJANGO_ENV = os.getenv('DJANGO_ENV', 'local')
+DJANGO_ENV = 'local'
 if DJANGO_ENV == 'test':
     load_dotenv(os.path.join(BASE_DIR, '.env.test'))
 elif DJANGO_ENV == 'prod':
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_yasg',
     'rest_framework',
+    'corsheaders',
     'account_center',
     'shop',
     'cart',
@@ -89,6 +90,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # 前端開發伺服器的地址
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -122,6 +128,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 WSGI_APPLICATION = 'scubashop.wsgi.application'
@@ -218,8 +225,8 @@ if DJANGO_ENV == 'local':
         'loggers': {
             'django': {
                 'handlers': ['console'],
-                # 'level': 'DEBUG',
-                'level': 'ERROR',
+                'level': 'DEBUG',
+                # 'level': 'ERROR',
                 'propagate': True,
             },
         },

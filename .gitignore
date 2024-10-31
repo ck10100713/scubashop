@@ -10,3 +10,7 @@
 # others
 note.md
 myenv/
+
+# Ignore Python bytecode files
+*.pyc
+__pycache__/

@@ -1,100 +1,17 @@
-# order/views.py
-from django.shortcuts import render, get_object_or_404, redirect
+from rest_framework import viewsets, permissions, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.utils.decorators import method_decorator
 from .models import Order, OrderItem
 from account_center.models import DefaultRecipient, UserProfile
 from cart.models import Cart
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status, permissions
 from .serializers import OrderSerializer, OrderItemSerializer
 from django.views.decorators.cache import never_cache
-
-@login_required
-def order_check(request):
-    cart_items = Cart.objects.filter(user=request.user)
-    total_price = sum(item.get_total_price() for item in cart_items)
-    if total_price == 0:
-        messages.warning(request, '您的購物車內沒有商品')
-        return redirect('cart:detail')
-    if request.method == 'POST':
-        return redirect('orders:create')
-    return render(request, 'orders/check.html', {'cart_items': cart_items, 'total_price': total_price})
-
-@never_cache
-@login_required
-def order_create(request):
-    cart_items = Cart.objects.filter(user=request.user)
-    # check empty
-    if not cart_items:
-        messages.warning(request, '您的購物車內沒有商品')
-        return redirect('cart:detail')
-    total_price = sum(item.get_total_price() for item in cart_items)
-    try:
-        default_recipient = DefaultRecipient.objects.get(user=request.user)
-    except DefaultRecipient.DoesNotExist:
-        default_recipient = None
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        user_profile = None
-
-    if request.method == 'POST':
-        form_data = request.POST
-        name = form_data.get('recipient_name')
-        address = form_data.get('recipient_address')
-        contact_number = form_data.get('recipient_number')
-        email = form_data.get('email')
-        credit_card = form_data.get('credit_card')
-        amount=total_price
-        # 創建訂單
-        order = Order.objects.create(
-            user=request.user,
-            name=name,
-            address=address,
-            contact_number=contact_number,
-            email=email,
-            amount=amount,
-        )
-        for item in cart_items:
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                price=item.product.price,
-                quantity=item.quantity
-            )
-        # 清空購物車
-        cart_items.delete()
-        # 跳轉到支付頁面
-        return redirect('payment:process', order_id=order.id)
-
-    return render(request, 'orders/create.html', {
-        'cart_items': cart_items,
-        'total_price': total_price,
-        'default_recipient': default_recipient,
-        'user_profile': user_profile
-    })
-
-@login_required
-def order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    total_cost = sum(item.get_total_price() for item in order.items.all())
-    if order.user == request.user or request.user.is_staff:
-        total_cost = sum(item.get_total_price() for item in order.items.all())
-        return render(request, 'orders/detail.html', {'order': order, 'total_cost': total_cost})
-    else:
-        # 如果用戶沒有權限查看訂單，返回403禁止訪問
-        return render(request, '403.html')  # 確保有一個403.html模板文件
-
-@login_required
-def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'orders/history.html', {'orders': orders})
-
-from rest_framework import viewsets
-from rest_framework import filters
+from django.contrib import messages
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from .filters import OrderFilter
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -111,51 +28,73 @@ class OrderViewSet(viewsets.ModelViewSet):
             self.permission_classes = [permissions.AllowAny]
         return super().get_permissions()
 
-# @api_view(['GET'])
-# def api_overview(request):
-#     api_urls = {
-#         'Order List': 'api/orderbooks/',
-#         'Order Detail': 'api/orderbooks/<str:pk>/',
-#     }
-#     return Response(api_urls)
+class OrderCheckView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-# @api_view(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
-# @permission_classes([permissions.IsAdminUser])
-# def orderbooks(request, pk=None):
-#     if request.method == 'GET':
-#         if pk:
-#             order = Order.objects.get(id=pk)
-#             serializer = OrderSerializer(order, many=False)
-#         else:
-#             # get all orders which content only user id and order id
-#             orders = Order.objects.all()
-#             serializer = OrderSummarySerializer(orders, many=True)
-#         return Response(serializer.data)
+    def get(self, request):
+        cart_items = Cart.objects.filter(user=request.user)
+        total_price = sum(item.get_total_price() for item in cart_items)
+        if total_price == 0:
+            return Response({'error': '您的購物車內沒有商品'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'cart_items': OrderItemSerializer(cart_items, many=True).data, 'total_price': total_price}, status=status.HTTP_200_OK)
 
-#     elif request.method == 'POST':
-#         serializer = OrderSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class OrderCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-#     elif request.method == 'PUT':
-#         order = Order.objects.get(id=pk)
-#         serializer = OrderSerializer(instance=order, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @never_cache
+    def post(self, request):
+        cart_items = Cart.objects.filter(user=request.user)
+        if not cart_items:
+            return Response({'error': '您的購物車內沒有商品'}, status=status.HTTP_400_BAD_REQUEST)
+        total_price = sum(item.get_total_price() for item in cart_items)
+        try:
+            default_recipient = DefaultRecipient.objects.get(user=request.user)
+        except DefaultRecipient.DoesNotExist:
+            default_recipient = None
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
 
-#     elif request.method == 'DELETE':
-#         order = Order.objects.get(id=pk)
-#         order.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+        form_data = request.data
+        name = form_data.get('recipient_name')
+        address = form_data.get('recipient_address')
+        contact_number = form_data.get('recipient_number')
+        email = form_data.get('email')
+        credit_card = form_data.get('credit_card')
+        amount = total_price
 
-#     elif request.method == 'PATCH':
-#         order = Order.objects.get(id=pk)
-#         serializer = OrderSerializer(instance=order, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        order = Order.objects.create(
+            user=request.user,
+            name=name,
+            address=address,
+            contact_number=contact_number,
+            email=email,
+            amount=amount,
+        )
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                price=item.product.price,
+                quantity=item.quantity
+            )
+        cart_items.delete()
+        return Response({'message': '訂單創建成功', 'order_id': order.id}, status=status.HTTP_201_CREATED)
+
+class OrderDetailView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        if order.user == request.user or request.user.is_staff:
+            total_cost = sum(item.get_total_price() for item in order.items.all())
+            return Response({'order': OrderSerializer(order).data, 'total_cost': total_cost}, status=status.HTTP_200_OK)
+        return Response({'error': '無權查看此訂單'}, status=status.HTTP_403_FORBIDDEN)
+
+class OrderHistoryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+        return Response({'orders': OrderSerializer(orders, many=True).data}, status=status.HTTP_200_OK)

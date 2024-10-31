@@ -1,6 +1,7 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from django.shortcuts import get_object_or_404, redirect
 from orders.models import Order
 import paypalrestsdk
 from .paypal_config import configure_paypal
@@ -9,24 +10,22 @@ import json
 # config
 configure_paypal()
 
-# Create your views here.
-@login_required
-def payment_process(request, order_id):
-    # order_id = request.session.get('order_id')
-    order = get_object_or_404(Order, id=order_id)
-    if order.user == request.user or request.user.is_staff:
-        # 確認訂單是否已經支付過
-        if order.paid:
-            return render(request, 'payment/already_paid.html', {'order': order})
+class PaymentProcessView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-        if request.method == 'POST':
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        if order.user == request.user or request.user.is_staff:
+            if order.paid:
+                return Response({'error': '訂單已經支付過'}, status=status.HTTP_400_BAD_REQUEST)
+
             payment = paypalrestsdk.Payment({
                 "intent": "sale",
                 "payer": {
                     "payment_method": "paypal"},
                 "redirect_urls": {
-                    "return_url": request.build_absolute_uri('/payment/done/'),
-                    "cancel_url": request.build_absolute_uri('/payment/canceled/')},
+                    "return_url": request.build_absolute_uri('/api/payment/done/'),
+                    "cancel_url": request.build_absolute_uri('/api/payment/canceled/')},
                 "transactions": [{
                     "item_list": {
                         "items": [{
@@ -45,47 +44,47 @@ def payment_process(request, order_id):
                     if link.rel == "approval_url":
                         approval_url = str(link.href)
                         request.session['order_id'] = order.id
-                        return redirect(approval_url)
+                        return Response({'approval_url': approval_url}, status=status.HTTP_200_OK)
             else:
-                return render(request, 'payment/error.html', {'error': payment.error})
-        return render(request, 'payment/process.html', {'order': order})
-    else:
-        return render(request, 'payment/error.html', {'error': 'You are not authorized to view this page.'})
+                return Response({'error': payment.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({'error': '您無權查看此頁面'}, status=status.HTTP_403_FORBIDDEN)
 
-def payment_done(request):
-    payment_id = request.GET.get('paymentId')
-    payer_id = request.GET.get('PayerID')
-    payment = paypalrestsdk.Payment.find(payment_id)
-    if payment.execute({"payer_id": payer_id}):
-        # 從 session 中獲取 order_id
-        order_id = request.session.get('order_id')
-        if not order_id:
-            return render(request, 'payment/error.html', {'error': 'Order ID is missing'})
-        order = get_object_or_404(Order, id=order_id)
-        order.paid = True
-        order.save()
-        # 清除 session 中的 order_id
-        del request.session['order_id']
-        return render(request, 'payment/done.html', {'order': order})
-    else:
-        return render(request, 'payment/error.html', {'error': payment.error})
+class PaymentDoneView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-def payment_canceled(request):
-    return render(request, 'payment/canceled.html')
+    def get(self, request):
+        payment_id = request.GET.get('paymentId')
+        payer_id = request.GET.get('PayerID')
+        payment = paypalrestsdk.Payment.find(payment_id)
+        if payment.execute({"payer_id": payer_id}):
+            order_id = request.session.get('order_id')
+            if not order_id:
+                return Response({'error': '缺少訂單ID'}, status=status.HTTP_400_BAD_REQUEST)
+            order = get_object_or_404(Order, id=order_id)
+            order.paid = True
+            order.save()
+            del request.session['order_id']
+            return Response({'message': '支付成功', 'order': order.id}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': payment.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# webhook untested
-# def paypal_webhook(request):
-#     if request.method == 'POST':
-#         payload = json.loads(request.body)
-#         event_type = payload.get('event_type')
-#         if event_type == 'PAYMENT.SALE.COMPLETED':
-#             sale_id = payload['resource']['id']
-#             # 更新訂單狀態
-#             # 例如：查找訂單並標記為已支付
-#         # 處理其他事件
-#         return HttpResponse('OK')
-#     return HttpResponse('Invalid request', status=400)
+class PaymentCanceledView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-# def payment_detail(request, payment_id):
-#     payment = get_object_or_404(Payment, id=payment_id)
-#     return render(request, 'payment/detail.html', {'payment': payment})
+    def get(self, request):
+        return Response({'message': '支付已取消'}, status=status.HTTP_200_OK)
+
+# Webhook (未測試)
+class PayPalWebhookView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        payload = json.loads(request.body)
+        event_type = payload.get('event_type')
+        if event_type == 'PAYMENT.SALE.COMPLETED':
+            sale_id = payload['resource']['id']
+            # 更新訂單狀態
+            # 例如：查找訂單並標記為已支付
+        # 處理其他事件
+        return Response({'message': 'OK'}, status=status.HTTP_200_OK)
