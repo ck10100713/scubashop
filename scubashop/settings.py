@@ -4,22 +4,25 @@ from dotenv import load_dotenv
 
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
-# 加載 .env 文件中的環境變量
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# 根據環境變數加載不同的 .env 文件
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'local')
+# DJANGO_ENV = 'test'
+if DJANGO_ENV == 'test':
+    load_dotenv(os.path.join(BASE_DIR, '.env.test'))
+elif DJANGO_ENV == 'prod':
+    load_dotenv(os.path.join(BASE_DIR, '.env.prod'))
+else:
+    load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # 獲取環境變量
-DJANGO_ENV = os.getenv('DJANGO_ENV', 'local')
-
-# 通用設置
 SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = DJANGO_ENV == 'local'
 
-ALLOWED_HOSTS = ['*'] if DEBUG else ['ec2-100-27-173-161.compute-1.amazonaws.com', 'penguindiving.com']
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
 SITE_ID = 1
-
-# CSRF_TRUSTED_ORIGINS = [
-#     'https://767f-180-177-8-38.ngrok-free.app'
-# ]
 
 # aws boto3 sns service
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
@@ -66,7 +69,7 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'payment',
-    'api',
+    # 'api',
     # oauth
     'django.contrib.sites',
     'allauth',
@@ -111,10 +114,6 @@ TEMPLATES = [
     },
 ]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-# }
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
@@ -152,12 +151,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # 國際化
-# LANGUAGE_CODE = 'en-us'
-# TIME_ZONE = 'UTC'
-# USE_I18N = True
-# USE_L10N = True
-# USE_TZ = True
-
 TIME_ZONE = 'Asia/Taipei'
 LANGUAGE_CODE = 'zh-hant'
 USE_I18N = True
@@ -209,77 +202,55 @@ ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 
 # log
-# if DJANGO_ENV == 'local':
-#     LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['console'],
-#         'level': 'DEBUG',
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-#     }
-# else:
-#     LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'handlers': {
-#             'file': {
-#                 'level': 'ERROR',
-#                 'class': 'logging.FileHandler',
-#                 'filename': '/var/log/scubashop/django-error.log',
-#             },
-#         },
-#         'loggers': {
-#             'django': {
-#                 'handlers': ['file'],
-#                 'level': 'ERROR',
-#                 'propagate': True,
-#             },
-#         },
-#     }
-
-# LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'handlers': {
-#             'file': {
-#                 'level': 'ERROR',
-#                 'class': 'logging.FileHandler',
-#                 'filename': '/var/log/scubashop/django-error.log',
-#             },
-#         },
-#         'loggers': {
-#             'django': {
-#                 'handlers': ['file'],
-#                 'level': 'ERROR',
-#                 'propagate': True,
-#             },
-#         },
-#     }
+if DJANGO_ENV == 'local':
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                # 'level': 'DEBUG',
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
+else:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': '/var/log/scubashop/django-error.log',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
 
 # payment
 PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'
-PAYPAL_TEST = True  # 設為 True 使用沙箱環境，設為 False 使用實際環境
+PAYPAL_TEST = DJANGO_ENV != 'prod'  # 設為 True 使用沙箱環境，設為 False 使用實際環境
 
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET')
-PAYPAL_MODE = 'sandbox'  # 'live' for production
-
-# 限制登入次數
-# ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 10
-# ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+PAYPAL_MODE = 'sandbox' if PAYPAL_TEST else 'live'  # 'live' for production
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -305,7 +276,6 @@ MESSAGE_TAGS = {
 }
 
 # settings.py
-# APPEND_SLASH = False
 CART_SESSION_ID = 'cart'  # 定義購物車在 session 中的鍵名
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

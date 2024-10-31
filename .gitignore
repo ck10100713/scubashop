@@ -1,3 +1,12 @@
+# Ignore .env files
 .env
+.env.*
+
+# Ignore other sensitive configuration files
+*.key
+*.pem
+*.crt
+
+# others
 note.md
 myenv/
