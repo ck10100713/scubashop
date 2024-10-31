@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'payment',
-    'api',
+    # 'api',
     # oauth
     'django.contrib.sites',
     'allauth',
@@ -218,7 +218,8 @@ if DJANGO_ENV == 'local':
         'loggers': {
             'django': {
                 'handlers': ['console'],
-                'level': 'DEBUG',
+                # 'level': 'DEBUG',
+                'level': 'ERROR',
                 'propagate': True,
             },
         },
