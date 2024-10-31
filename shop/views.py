@@ -9,6 +9,11 @@ from .forms import ProductForm, CategoryForm, ProductFilterForm
 from rest_framework.decorators import permission_classes
 from rest_framework import permissions
 
+from django.shortcuts import render
+import logging
+
+logger = logging.getLogger(__name__)
+
 def index_views(request):
     products = Product.objects.filter(isActive=True).order_by('-id')[:3]
     context = {

@@ -209,24 +209,65 @@ ACCOUNT_ADAPTER = 'account_center.adapter.CustomAccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'account_center.adapter.CustomSocialAccountAdapter'
 
 # log
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': '/var/log/scubashop/django-error.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
+# if DJANGO_ENV == 'local':
+#     LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+#     }
+# else:
+#     LOGGING = {
+#         'version': 1,
+#         'disable_existing_loggers': False,
+#         'handlers': {
+#             'file': {
+#                 'level': 'ERROR',
+#                 'class': 'logging.FileHandler',
+#                 'filename': '/var/log/scubashop/django-error.log',
+#             },
+#         },
+#         'loggers': {
+#             'django': {
+#                 'handlers': ['file'],
+#                 'level': 'ERROR',
+#                 'propagate': True,
+#             },
+#         },
+#     }
+
+# LOGGING = {
+#         'version': 1,
+#         'disable_existing_loggers': False,
+#         'handlers': {
+#             'file': {
+#                 'level': 'ERROR',
+#                 'class': 'logging.FileHandler',
+#                 'filename': '/var/log/scubashop/django-error.log',
+#             },
+#         },
+#         'loggers': {
+#             'django': {
+#                 'handlers': ['file'],
+#                 'level': 'ERROR',
+#                 'propagate': True,
+#             },
+#         },
+#     }
 
 # payment
 PAYPAL_RECEIVER_EMAIL = 'ScubaShop_Paypal_Test@business.example.com'
@@ -271,3 +312,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/account_center/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+import logging
+
+# 確認日誌配置
+logger = logging.getLogger(__name__)
+logger.debug("Django settings module loaded")

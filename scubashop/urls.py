@@ -29,15 +29,15 @@ from django.urls import path, include
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Scuba Shop API",
+        title="ScubaShop API",
         default_version='v1',
-        description="Scuba Shop API",
+        description="API documentation for ScubaShop",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="penguin.divingclub@gmail.com"),
+        contact=openapi.Contact(email="contact@scubashop.local"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
-    permission_classes=(permissions.IsAdminUser,),
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -49,6 +49,7 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('payment/', include('payment.urls')),
     # api
+    path('api/', include('api.urls')),
     # path('api/', include('shop.urls')),
     # path('api/', include('orders.urls')),
     # oauth
