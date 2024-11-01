@@ -18,7 +18,8 @@ else:
 # 獲取環境變量
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
@@ -225,8 +226,8 @@ if DJANGO_ENV == 'local':
         'loggers': {
             'django': {
                 'handlers': ['console'],
-                'level': 'DEBUG',
-                # 'level': 'ERROR',
+                # 'level': 'DEBUG',
+                'level': 'ERROR',
                 'propagate': True,
             },
         },
