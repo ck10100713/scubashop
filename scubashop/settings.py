@@ -96,6 +96,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # 前端開發伺服器的地址
+    "http://localhost:8080",
 ]
 
 AUTHENTICATION_BACKENDS = [
